@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+  <meta charset="UTF-8">
+  <title>Panel Dyspozytora - Drobin Urbanow MPK</title>
+  <style>
+    body { font-family: sans-serif; background: #0d1117; color: #fff; padding: 20px; }
+    .card { background: #161b22; padding: 20px; border-radius: 8px; border: 1px solid #30363d; margin-bottom: 20px; max-width: 600px; }
+    h2 { color: #f28c28; margin-bottom: 15px; }
+    input, select { width: 100%; padding: 10px; margin-bottom: 10px; background: #0d1117; border: 1px solid #30363d; color: #fff; border-radius: 4px; }
+    .btn { background: #2ea043; color: white; border: none; padding: 10px 15px; font-weight: bold; border-radius: 4px; cursor: pointer; }
+    .stop-row { display: flex; gap: 10px; }
+  </style>
+</head>
+<body>
+
+  <h1>Panel Zarządzania Grafikiem MPK Roblox</h1>
+  
+  <div class="card">
+    <h2>1. Przypisz Grafik dla Kierowcy</h2>
+    <label>ID / Nick Kierowcy z Robloxa:</label>
+    <input type="text" placeholder="np. kierowca1">
+
+    <label>Wybierz Linię:</label>
+    <select>
+      <option>Linia 161 (Zakładowa MPK -> Rondo Legionów)</option>
+    </select>
+
+    <label>Liczba Kółek do wykonania:</label>
+    <input type="number" value="3">
+
+    <button class="btn">Wyślij Grafik i Wyślij Powiadomienie PUSH</button>
+  </div>
+
+  <div class="card">
+    <h2>2. Kreator Przystanków i Czasów (Sekundy/Minuty)</h2>
+    <input type="text" placeholder="Numer Linii (np. 161)">
+    
+    <h3>Przystanki:</h3>
+    <div class="stop-row">
+      <input type="text" placeholder="Nazwa Przystanku (np. Plac Wolności)">
+      <input type="number" placeholder="Czas dojazdu (w sekundach)" style="width: 150px;">
+    </div>
+    
+    <button class="btn" style="background: #f28c28;">+ Dodaj kolejny przystanek</button>
+  </div>
+
+</body>
+</html>

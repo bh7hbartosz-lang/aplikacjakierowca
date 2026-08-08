@@ -1,0 +1,445 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Drobin Urbanow MPK - Kierowca</title>
+
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; user-select: none; }
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #0d1117;
+      color: #f0f6fc;
+      height: 100vh;
+      overflow: hidden;
+      display: flex;
+    }
+
+    /* Zmuszenie do widoku poziomego / powiadomienie o obrocie */
+    @media screen and (orientation: portrait) {
+      #rotate-warning { display: flex !important; }
+      #app { display: none !important; }
+    }
+
+    #rotate-warning {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: #0d1117;
+      z-index: 9999;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      padding: 20px;
+    }
+    #rotate-warning h2 { color: #f28c28; margin-bottom: 10px; }
+
+    /* EKRAN LOGOWANIA */
+    #login-screen {
+      position: fixed;
+      inset: 0;
+      background: #161b22;
+      z-index: 1000;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+    }
+    .login-card {
+      background: #21262d;
+      padding: 25px;
+      border-radius: 12px;
+      border: 1px solid #30363d;
+      width: 320px;
+      text-align: center;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.5);
+    }
+    .login-card h2 { color: #f28c28; margin-bottom: 5px; font-size: 20px; }
+    .login-card p { color: #8b949e; font-size: 12px; margin-bottom: 20px; }
+    .input-field {
+      width: 100%;
+      padding: 10px;
+      margin-bottom: 15px;
+      background: #0d1117;
+      border: 1px solid #30363d;
+      border-radius: 6px;
+      color: #fff;
+      font-size: 14px;
+    }
+
+    /* GŁÓWNY INTERFEJS POZIOMY */
+    #app {
+      display: flex;
+      width: 100vw;
+      height: 100vh;
+    }
+
+    /* LEWY PANEL: GRAFIK I LINIE */
+    .sidebar {
+      width: 30%;
+      background: #161b22;
+      border-right: 1px solid #30363d;
+      display: flex;
+      flex-direction: column;
+      padding: 12px;
+    }
+    .driver-info {
+      padding: 10px;
+      background: #21262d;
+      border-radius: 8px;
+      margin-bottom: 10px;
+      border-left: 4px solid #f28c28;
+    }
+    .driver-info h3 { font-size: 14px; color: #fff; }
+    .driver-info p { font-size: 11px; color: #8b949e; }
+
+    .schedule-title {
+      font-size: 12px;
+      font-weight: bold;
+      color: #8b949e;
+      text-transform: uppercase;
+      margin: 8px 0 4px 0;
+    }
+
+    .route-card {
+      background: #21262d;
+      border: 1px solid #30363d;
+      border-radius: 8px;
+      padding: 10px;
+      margin-bottom: 8px;
+      cursor: pointer;
+      transition: 0.2s;
+    }
+    .route-card.active { border-color: #f28c28; background: #2b3038; }
+    .route-badge {
+      background: #f28c28;
+      color: #000;
+      font-weight: bold;
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-size: 12px;
+      display: inline-block;
+    }
+
+    /* PRAWY PANEL: Pulpit Jazdy */
+    .main-content {
+      width: 70%;
+      display: flex;
+      flex-direction: column;
+      background: #0d1117;
+    }
+
+    .top-bar {
+      background: #161b22;
+      padding: 10px 15px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid #30363d;
+    }
+    .clock-box { font-family: monospace; font-size: 20px; font-weight: bold; color: #2ea043; }
+    
+    .dashboard {
+      flex: 1;
+      padding: 15px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    .stops-container {
+      background: #161b22;
+      border: 1px solid #30363d;
+      border-radius: 8px;
+      padding: 10px;
+      flex: 1;
+      overflow-y: auto;
+      margin-bottom: 10px;
+    }
+
+    .stop-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px;
+      background: #21262d;
+      border-radius: 6px;
+      margin-bottom: 6px;
+      border-left: 3px solid #58a6ff;
+    }
+    .stop-item.current { border-left-color: #f28c28; background: #2d333b; }
+    .stop-item.passed { border-left-color: #2ea043; opacity: 0.5; }
+
+    .timer-box {
+      background: #21262d;
+      border-radius: 8px;
+      padding: 10px 15px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 10px;
+    }
+
+    .btn {
+      background: #f28c28;
+      color: #000;
+      border: none;
+      padding: 12px 20px;
+      font-size: 14px;
+      font-weight: bold;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+    .btn:disabled { background: #30363d; color: #8b949e; }
+  </style>
+</head>
+<body>
+
+  <!-- OSTRZEŻENIE O PIONOWYM EKRANIE -->
+  <div id="rotate-warning">
+    <h2>📱 Obróć telefon!</h2>
+    <p>Aplikacja Drobin Urbanow MPK wymaga trybu poziomego do prawidłowego działania.</p>
+  </div>
+
+  <!-- OKNO LOGOWANIA -->
+  <div id="login-screen">
+    <div class="login-card">
+      <h2>Drobin Urbanow MPK</h2>
+      <p>System Kierowcy v1.0</p>
+      <input type="text" id="driver-id" class="input-field" placeholder="Podaj Login Kierowcy...">
+      <button class="btn" style="width: 100%" onclick="zaloguj()">Zaloguj do Służby</button>
+    </div>
+  </div>
+
+  <!-- APLIKACJA GŁÓWNA -->
+  <div id="app">
+    <!-- LEWA STRONA: GRAFIK I LINIA -->
+    <div class="sidebar">
+      <div class="driver-info">
+        <h3 id="disp-driver-id">Kierowca: -</h3>
+        <p id="disp-status">Status: Na zajezdni</p>
+      </div>
+
+      <div class="schedule-title">Twój grafik na dziś:</div>
+      
+      <div id="schedule-list">
+        <!-- Generowane z JS -->
+      </div>
+    </div>
+
+    <!-- PRAWA STRONA: TRASA I STOPER -->
+    <div class="main-content">
+      <div class="top-bar">
+        <div>
+          <span style="color: #8b949e; font-size: 12px;">AKTYWNA LINIA:</span>
+          <strong id="active-line-name" style="color: #f28c28; font-size: 16px; margin-left: 5px;">Brak</strong>
+        </div>
+        <div class="clock-box" id="live-clock">00:00:00</div>
+      </div>
+
+      <div class="dashboard">
+        <!-- PODSUMOWANIE KÓŁEK I ODMIAR CZASU -->
+        <div class="timer-box">
+          <div>
+            <span style="font-size: 11px; color: #8b949e; display: block;">POSTĘP KÓŁEK:</span>
+            <strong id="lap-counter" style="font-size: 16px; color: #58a6ff;">0 / 0</strong>
+          </div>
+          <div style="text-align: right;">
+            <span style="font-size: 11px; color: #8b949e; display: block;">CZAS DO NASTĘPNEGO PRZYSTANKU:</span>
+            <strong id="stop-timer" style="font-size: 20px; color: #2ea043;">00:00</strong>
+          </div>
+        </div>
+
+        <!-- LISTA PRZYSTANKÓW -->
+        <div class="stops-container" id="stops-list">
+          <div style="text-align: center; color: #8b949e; margin-top: 20px;">Wybierz linię z grafiku po lewej stronie i kliknij "Zacznij Kurs"</div>
+        </div>
+
+        <!-- PRZYCISK STEROWANIA -->
+        <div style="display: flex; gap: 10px;">
+          <button id="btn-start" class="btn" style="flex: 1;" onclick="startKurs()" disabled>ZACZNIJ KURS</button>
+          <button id="btn-next-stop" class="btn" style="flex: 1; background: #21262d; color: #fff; border: 1px solid #30363d;" onclick="zaliczPrzystanek()" disabled>NASTĘPNY PRZYSTANEK ✓</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // PRZYKŁADOWA BAZA DANYCH GRAFIKU I PRZYSTANKÓW (Jako podgląd)
+    const mockData = {
+      "kierowca1": {
+        nazwa: "Jan Kowalski (ID: 102)",
+        linie: [
+          {
+            numer: "161",
+            relacja: "Zakładowa MPK ➔ Rondo Legionów",
+            kolek: 3,
+            przystanki: [
+              { nazwa: "Zakładowa MPK", czas_sek: 0 },
+              { nazwa: "Plac Wolności", czas_sek: 90 },
+              { nazwa: "Reja", czas_sek: 60 },
+              { nazwa: "Brzechwy", czas_sek: 120 },
+              { nazwa: "Rondo Legionów", czas_sek: 150 }
+            ]
+          }
+        ]
+      }
+    };
+
+    let aktualnyKierowca = null;
+    let wybralLinia = null;
+    let aktywneKolko = 1;
+    let aktualnyPrzystanekIndex = 0;
+    let timerInterval = null;
+    let pozostalyCzas = 0;
+
+    // Zegar w czasie rzeczywistym
+    setInterval(() => {
+      const now = new Date();
+      document.getElementById('live-clock').innerText = now.toLocaleTimeString();
+    }, 1000);
+
+    function zaloguj() {
+      const id = document.getElementById('driver-id').value.trim();
+      if (!id) return alert('Wpisz login!');
+
+      // W prawdziwej wersji pobiera z Firebase
+      aktualnyKierowca = mockData[id] || {
+        nazwa: id,
+        linie: [
+          {
+            numer: "161",
+            relacja: "Zakładowa MPK ➔ Rondo Legionów",
+            kolek: 4,
+            przystanki: [
+              { nazwa: "Zakładowa MPK", czas_sek: 0 },
+              { nazwa: "Plac Wolności", czas_sek: 90 },
+              { nazwa: "Reja", czas_sek: 60 },
+              { nazwa: "Rondo Legionów Polskich", czas_sek: 120 }
+            ]
+          }
+        ]
+      };
+
+      document.getElementById('login-screen').style.display = 'none';
+      document.getElementById('disp-driver-id').innerText = aktualnyKierowca.nazwa;
+      
+      pobierzGrafik();
+      
+      // Powiadomienie PWA
+      if ("Notification" in window && Notification.permission !== "granted") {
+        Notification.requestPermission();
+      }
+    }
+
+    function pobierzGrafik() {
+      const container = document.getElementById('schedule-list');
+      container.innerHTML = '';
+
+      aktualnyKierowca.linie.forEach((linia, idx) => {
+        container.innerHTML += `
+          <div class="route-card" onclick="wybierzLinie(${idx})">
+            <span class="route-badge">Linia ${linia.numer}</span>
+            <div style="font-size: 12px; margin-top: 5px; font-weight: bold;">${linia.relacja}</div>
+            <div style="font-size: 11px; color: #8b949e; margin-top: 3px;">Zaplanowano kółek: ${linia.kolek}</div>
+          </div>
+        `;
+      });
+    }
+
+    function wybierzLinie(idx) {
+      wybralLinia = aktualnyKierowca.linie[idx];
+      document.getElementById('active-line-name').innerText = `Linia ${wybralLinia.numer} (${wybralLinia.relacja})`;
+      document.getElementById('lap-counter').innerText = `1 / ${wybralLinia.kolek}`;
+      document.getElementById('btn-start').disabled = false;
+
+      wyswietlPrzystanki();
+    }
+
+    function wyswietlPrzystanki() {
+      const container = document.getElementById('stops-list');
+      container.innerHTML = '';
+
+      wybralLinia.przystanki.forEach((p, index) => {
+        let statusClass = '';
+        if (index < aktualnyPrzystanekIndex) statusClass = 'passed';
+        if (index === aktualnyPrzystanekIndex) statusClass = 'current';
+
+        container.innerHTML += `
+          <div class="stop-item ${statusClass}">
+            <div>
+              <strong>${index + 1}. ${p.nazwa}</strong>
+              <div style="font-size: 11px; color: #8b949e;">Czas na dojazd: ${p.czas_sek} sek.</div>
+            </div>
+            <div style="font-size: 12px; font-weight: bold;">
+              ${index === aktualnyPrzystanekIndex ? '⬅ OBECNY' : ''}
+            </div>
+          </div>
+        `;
+      });
+    }
+
+    function startKurs() {
+      document.getElementById('btn-start').disabled = true;
+      document.getElementById('btn-next-stop').disabled = false;
+      document.getElementById('disp-status').innerText = "Status: W trasie";
+      
+      startTimerForStop();
+    }
+
+    function startTimerForStop() {
+      clearInterval(timerInterval);
+      
+      const nastepnyIndex = aktualnyPrzystanekIndex + 1;
+      if (nastepnyIndex < wybralLinia.przystanki.length) {
+        pozostalyCzas = wybralLinia.przystanki[nastepnyIndex].czas_sek;
+      } else {
+        pozostalyCzas = 0;
+      }
+
+      updateTimerDisplay();
+
+      timerInterval = setInterval(() => {
+        if (pozostalyCzas > 0) {
+          pozostalyCzas--;
+          updateTimerDisplay();
+        } else {
+          clearInterval(timerInterval);
+        }
+      }, 1000);
+    }
+
+    function updateTimerDisplay() {
+      const min = Math.floor(pozostalyCzas / 60);
+      const sec = pozostalyCzas % 60;
+      document.getElementById('stop-timer').innerText = 
+        `${min.toString().padStart(2, '0')}:${sec.toString().padStart(2, '0')}`;
+    }
+
+    function zaliczPrzystanek() {
+      if (aktualnyPrzystanekIndex < wybralLinia.przystanki.length - 1) {
+        aktualnyPrzystanekIndex++;
+        wyswietlPrzystanki();
+        startTimerForStop();
+      } else {
+        // Koniec Kółka
+        clearInterval(timerInterval);
+        if (aktywneKolko < wybralLinia.kolek) {
+          alert(`Koniec kółka ${aktywneKolko}! Zaczynasz kółko ${aktywneKolko + 1}.`);
+          aktywneKolko++;
+          aktualnyPrzystanekIndex = 0;
+          document.getElementById('lap-counter').innerText = `${aktywneKolko} / ${wybralLinia.kolek}`;
+          wyswietlPrzystanki();
+          startTimerForStop();
+        } else {
+          alert('Gratulacje! Zrealizowano cały grafik na tę linię!');
+          document.getElementById('btn-next-stop').disabled = true;
+          document.getElementById('disp-status').innerText = "Status: Zakończono grafik";
+        }
+      }
+    }
+  </script>
+</body>
+</html>
