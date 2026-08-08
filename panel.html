@@ -4,6 +4,178 @@
   <meta charset="UTF-8">
   <title>Panel Dyspozytora - Drobin Urbanow MPK</title>
   <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background: #0d1117;
+      color: #f0f6fc;
+      padding: 20px;
+    }
+    h1 { color: #f28c28; margin-bottom: 20px; font-size: 24px; border-bottom: 1px solid #30363d; padding-bottom: 10px; }
+    
+    .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+    .card {
+      background: #161b22;
+      border: 1px solid #30363d;
+      border-radius: 10px;
+      padding: 20px;
+    }
+    .card h2 { color: #f28c28; font-size: 16px; margin-bottom: 15px; border-bottom: 1px solid #21262d; padding-bottom: 8px; }
+    
+    label { display: block; font-size: 12px; color: #8b949e; margin: 10px 0 4px 0; }
+    input, select {
+      width: 100%;
+      padding: 10px;
+      background: #0d1117;
+      border: 1px solid #30363d;
+      border-radius: 6px;
+      color: #fff;
+      font-size: 13px;
+    }
+    
+    .btn {
+      background: #2ea043;
+      color: white;
+      border: none;
+      padding: 10px 16px;
+      font-weight: bold;
+      border-radius: 6px;
+      cursor: pointer;
+      margin-top: 15px;
+      width: 100%;
+    }
+    .btn:hover { opacity: 0.9; }
+
+    .driver-list { margin-top: 10px; }
+    .driver-item { background: #21262d; padding: 10px; border-radius: 6px; margin-bottom: 8px; font-size: 13px; border-left: 3px solid #f28c28; }
+  </style>
+</head>
+<body>
+
+  <h1>🚍 Panel Dyspozytora - Drobin Urbanow MPK</h1>
+
+  <div class="grid">
+    <!-- KARTA 1: TWORZENIE KIEROWCÓW -->
+    <div class="card">
+      <h2>1. Dodaj Nowego Kierowcę</h2>
+      <label>Imię i Nazwisko / Nick (Roblox):</label>
+      <input type="text" id="new-name" placeholder="np. Jan Kowalski">
+      
+      <label>Login Kierowcy (do logowania na tel):</label>
+      <input type="text" id="new-login" placeholder="np. kowalski102">
+      
+      <button class="btn" onclick="dodajKierowce()">Stwórz Konto Kierowcy</button>
+
+      <h2 style="margin-top: 25px;">Lista Kierowców:</h2>
+      <div id="drivers-container" class="driver-list"></div>
+    </div>
+
+    <!-- KARTA 2: PRZYPISYWANIE GRAFIKU -->
+    <div class="card">
+      <h2>2. Przypisz Grafik (Sierpień 2026)</h2>
+      
+      <label>Wybierz Kierowcę:</label>
+      <select id="select-driver"></select>
+
+      <label>Dzień Miesiąca (1 - 31):</label>
+      <input type="number" id="schedule-day" min="1" max="31" value="8">
+
+      <label>Linia:</label>
+      <select id="schedule-line">
+        <option value="161">Linia 161 (Zakładowa MPK ➔ Rondo Legionów)</option>
+      </select>
+
+      <label>Liczba Kółek do Wykonania:</label>
+      <input type="number" id="schedule-laps" min="1" value="4">
+
+      <label>Przerwa Po Kółku Numer:</label>
+      <input type="number" id="schedule-break-lap" min="1" value="2" placeholder="np. 2 (po 2. kółku będzie przerwa)">
+
+      <button class="btn" style="background: #f28c28; color: #000;" onclick="zapiszGrafik()">Zapisz w Grafiku Miesięcznym</button>
+    </div>
+  </div>
+
+  <script>
+    function getDB() {
+      return JSON.parse(localStorage.getItem('mpk_db')) || { kierowcy: {}, grafiki: {} };
+    }
+
+    function saveDB(data) {
+      localStorage.setItem('mpk_db', JSON.stringify(data));
+      odswiezKomponenty();
+    }
+
+    function dodajKierowce() {
+      const name = document.getElementById('new-name').value.trim();
+      const login = document.getElementById('new-login').value.trim().toLowerCase();
+
+      if (!name || !login) return alert('Wypełnij pola!');
+
+      const db = getDB();
+      db.kierowcy[login] = { nazwa: name, login: login };
+      saveDB(db);
+
+      document.getElementById('new-name').value = '';
+      document.getElementById('new-login').value = '';
+      alert('Kierowca dodany!');
+    }
+
+    function zapiszGrafik() {
+      const login = document.getElementById('select-driver').value;
+      const dzien = document.getElementById('schedule-day').value;
+      const linia = document.getElementById('schedule-line').value;
+      const kolek = parseInt(document.getElementById('schedule-laps').value);
+      const przerwaKolko = parseInt(document.getElementById('schedule-break-lap').value);
+
+      if (!login) return alert('Wybierz kierowcę!');
+
+      const db = getDB();
+      if (!db.grafiki[login]) db.grafiki[login] = {};
+
+      db.grafiki[login][dzien] = {
+        linia: linia,
+        kolek: kolek,
+        przerwaPoKolku: przerwaKolko,
+        relacja: "Zakładowa MPK ➔ Rondo Legionów Polskich",
+        przystanki: [
+          { nazwa: "Zakładowa MPK", czas_sek: 0 },
+          { nazwa: "Plac Wolności", czas_sek: 120 },
+          { nazwa: "Reja", czas_sek: 90 },
+          { nazwa: "Brzechwy", czas_sek: 60 },
+          { nazwa: "Na bruku", czas_sek: 120 },
+          { nazwa: "Sukiennicza", czas_sek: 90 },
+          { nazwa: "Kamienna n/ż", czas_sek: 60 },
+          { nazwa: "Rondo Legionów Polskich", czas_sek: 50 }
+        ]
+      };
+
+      saveDB(db);
+      alert(`Przypisano grafik na dzień ${dzien} dla ${login}!`);
+    }
+
+    function odswiezKomponenty() {
+      const db = getDB();
+      const listContainer = document.getElementById('drivers-container');
+      const selectDriver = document.getElementById('select-driver');
+
+      listContainer.innerHTML = '';
+      selectDriver.innerHTML = '';
+
+      Object.values(db.kierowcy).forEach(k => {
+        listContainer.innerHTML += `<div class="driver-item"><strong>${k.nazwa}</strong> (Login: ${k.login})</div>`;
+        selectDriver.innerHTML += `<option value="${k.login}">${k.nazwa} (${k.login})</option>`;
+      });
+    }
+
+    odswiezKomponenty();
+  </script>
+</body>
+</html><!DOCTYPE html>
+<html lang="pl">
+<head>
+  <meta charset="UTF-8">
+  <title>Panel Dyspozytora - Drobin Urbanow MPK</title>
+  <style>
     body { font-family: sans-serif; background: #0d1117; color: #fff; padding: 20px; }
     .card { background: #161b22; padding: 20px; border-radius: 8px; border: 1px solid #30363d; margin-bottom: 20px; max-width: 600px; }
     h2 { color: #f28c28; margin-bottom: 15px; }
