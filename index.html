@@ -3,21 +3,19 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-  <title>Drobin Urbanow MPK - Kierowca</title>
+  <title>Drobin Urbanow MPK - Telefon</title>
 
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; user-select: none; }
-    
     html, body {
-      width: 100%;
-      height: 100dvh; /* Używamy dvh (dynamic viewport height) specjalnie pod telefony */
+      width: 100vw;
+      height: 100dvh;
       background-color: #0d1117;
       color: #f0f6fc;
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
       overflow: hidden;
     }
 
-    /* Dopasowanie do wcięcia (Notcha) oraz pasków Safari/Chrome */
     #app {
       display: flex;
       width: 100vw;
@@ -28,187 +26,113 @@
       padding-right: env(safe-area-inset-right, 5px);
     }
 
-    /* EKRAN LOGOWANIA */
+    /* LOGOWANIE */
     #login-screen {
-      position: fixed;
-      inset: 0;
-      background: #161b22;
-      z-index: 1000;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      padding: 10px;
+      position: fixed; inset: 0; background: #161b22; z-index: 1000;
+      display: flex; justify-content: center; align-items: center; padding: 10px;
     }
     .login-card {
-      background: #21262d;
-      padding: 15px;
-      border-radius: 12px;
-      border: 1px solid #30363d;
-      width: 280px;
-      text-align: center;
+      background: #21262d; padding: 20px; border-radius: 12px;
+      border: 1px solid #30363d; width: 280px; text-align: center;
     }
-    .login-card h2 { color: #f28c28; font-size: 16px; margin-bottom: 4px; }
-    .login-card p { color: #8b949e; font-size: 11px; margin-bottom: 12px; }
+    .login-card h2 { color: #f28c28; font-size: 18px; margin-bottom: 4px; }
     .input-field {
-      width: 100%;
-      padding: 8px;
-      margin-bottom: 10px;
-      background: #0d1117;
-      border: 1px solid #30363d;
-      border-radius: 6px;
-      color: #fff;
-      font-size: 13px;
+      width: 100%; padding: 10px; margin: 12px 0; background: #0d1117;
+      border: 1px solid #30363d; border-radius: 6px; color: #fff; font-size: 13px;
     }
 
-    /* LEWA STRONA (GRAFIK) */
-    .sidebar {
-      width: 28%;
-      background: #161b22;
-      border-right: 1px solid #30363d;
-      display: flex;
-      flex-direction: column;
-      padding: 6px;
-      gap: 6px;
-      overflow-y: auto;
+    /* WIDOK MIESIĘCZNY GRAFIKU */
+    #month-screen {
+      position: fixed; inset: 0; background: #0d1117; z-index: 500;
+      display: flex; flex-direction: column; padding: 10px; overflow-y: auto;
     }
-    .driver-info {
-      padding: 6px;
-      background: #21262d;
-      border-radius: 6px;
-      border-left: 3px solid #f28c28;
+    .month-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+    .calendar-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px; }
+    .day-card {
+      background: #161b22; border: 1px solid #30363d; border-radius: 6px;
+      padding: 6px; text-align: center; font-size: 11px; min-height: 55px;
+      display: flex; flex-direction: column; justify-content: space-between;
     }
+    .day-card.active-day { border-color: #f28c28; background: #21262d; }
+    .day-badge { background: #f28c28; color: #000; font-weight: bold; border-radius: 3px; font-size: 9px; padding: 1px 2px; }
+
+    /* LEWY PANEL GRAFIKU */
+    .sidebar { width: 28%; background: #161b22; border-right: 1px solid #30363d; display: flex; flex-direction: column; padding: 6px; gap: 6px; }
+    .driver-info { padding: 6px; background: #21262d; border-radius: 6px; border-left: 3px solid #f28c28; }
     .driver-info h3 { font-size: 11px; color: #fff; }
-    .driver-info p { font-size: 9px; color: #8b949e; }
 
-    .schedule-title { font-size: 9px; font-weight: bold; color: #8b949e; text-transform: uppercase; }
-
-    .route-card {
-      background: #21262d;
-      border: 1px solid #30363d;
-      border-radius: 6px;
-      padding: 6px;
-      cursor: pointer;
-    }
-    .route-card.active { border-color: #f28c28; background: #2b3038; }
-    .route-badge {
-      background: #f28c28;
-      color: #000;
-      font-weight: bold;
-      padding: 1px 4px;
-      border-radius: 3px;
-      font-size: 10px;
-      display: inline-block;
-    }
-
-    /* PRAWA STRONA (EKRAN JAZDY) */
-    .main-content {
-      width: 72%;
-      display: flex;
-      flex-direction: column;
-      background: #0d1117;
-      padding: 6px;
-      gap: 6px;
-    }
-
-    .top-bar {
-      background: #161b22;
-      padding: 4px 8px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      border-radius: 6px;
-      border: 1px solid #30363d;
-      min-height: 28px;
-    }
-    .clock-box { font-family: monospace; font-size: 14px; font-weight: bold; color: #2ea043; }
-
-    .timer-box {
-      background: #21262d;
-      border-radius: 6px;
-      padding: 4px 8px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      border: 1px solid #30363d;
-    }
-
-    .stops-container {
-      background: #161b22;
-      border: 1px solid #30363d;
-      border-radius: 6px;
-      padding: 6px;
-      flex: 1; /* Wypełnia wolną przestrzeń */
-      overflow-y: auto; /* Daje możliwość przewijania listy przystanków */
-    }
-
-    .stop-item {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 6px 8px;
-      background: #21262d;
-      border-radius: 4px;
-      margin-bottom: 4px;
-      border-left: 3px solid #58a6ff;
-    }
+    /* PRAWY PANEL JAZDY */
+    .main-content { width: 72%; display: flex; flex-direction: column; background: #0d1117; padding: 6px; gap: 6px; }
+    .top-bar { background: #161b22; padding: 4px 8px; display: flex; justify-content: space-between; border-radius: 6px; border: 1px solid #30363d; }
+    .timer-box { background: #21262d; border-radius: 6px; padding: 4px 8px; display: flex; justify-content: space-between; border: 1px solid #30363d; }
+    .stops-container { background: #161b22; border: 1px solid #30363d; border-radius: 6px; padding: 6px; flex: 1; overflow-y: auto; }
+    .stop-item { display: flex; justify-content: space-between; padding: 6px; background: #21262d; border-radius: 4px; margin-bottom: 4px; border-left: 3px solid #58a6ff; }
     .stop-item.current { border-left-color: #f28c28; background: #2d333b; }
     .stop-item.passed { border-left-color: #2ea043; opacity: 0.4; }
 
-    /* DOLNE PRZYCISKI - MOCNE I WIDOCZNE */
-    .action-buttons {
-      display: flex;
-      gap: 6px;
-      min-height: 38px;
+    /* OKNO PRZERWY */
+    #break-overlay {
+      position: absolute; inset: 0; background: rgba(13, 17, 23, 0.95);
+      z-index: 800; display: none; flex-direction: column;
+      justify-content: center; align-items: center; text-align: center; padding: 20px;
     }
 
-    .btn {
-      background: #f28c28;
-      color: #000;
-      border: none;
-      padding: 8px;
-      font-size: 12px;
-      font-weight: bold;
-      border-radius: 6px;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-    .btn:disabled { background: #21262d; color: #555; border: 1px solid #30363d; }
+    .action-buttons { display: flex; gap: 6px; min-height: 38px; }
+    .btn { background: #f28c28; color: #000; border: none; padding: 8px; font-size: 12px; font-weight: bold; border-radius: 6px; cursor: pointer; }
+    .btn:disabled { background: #21262d; color: #555; }
   </style>
 </head>
 <body>
 
-  <!-- OKNO LOGOWANIA -->
+  <!-- EKRAN LOGOWANIA -->
   <div id="login-screen">
     <div class="login-card">
       <h2>Drobin Urbanow MPK</h2>
-      <p>System Kierowcy v1.2</p>
-      <input type="text" id="driver-id" class="input-field" placeholder="Podaj Login Kierowcy...">
+      <p style="font-size: 11px; color: #8b949e;">Aplikacja Kierowcy</p>
+      <input type="text" id="driver-login" class="input-field" placeholder="Podaj swój login...">
       <button class="btn" style="width: 100%" onclick="zaloguj()">Zaloguj do Służby</button>
     </div>
   </div>
 
-  <!-- APLIKACJA GŁÓWNA -->
-  <div id="app">
-    <!-- LEWY PANEL -->
+  <!-- WIDOK MIESIĘCZNEGO GRAFIKU -->
+  <div id="month-screen" style="display: none;">
+    <div class="month-header">
+      <div>
+        <h2 style="color: #f28c28; font-size: 16px;" id="month-driver-name">Kierowca</h2>
+        <p style="font-size: 11px; color: #8b949e;">Grafik na Sierpień 2026</p>
+      </div>
+      <button class="btn" style="background: #21262d; color: #fff;" onclick="wyloguj()">Wyloguj</button>
+    </div>
+    <div class="calendar-grid" id="calendar-grid"></div>
+  </div>
+
+  <!-- NAKŁADKA PRZERWY -->
+  <div id="break-overlay">
+    <h2 style="color: #f28c28; font-size: 20px; margin-bottom: 10px;">☕ CZAS NA PRZERWĘ!</h2>
+    <p style="color: #8b949e; font-size: 13px; margin-bottom: 20px;">Wykonano wymaganą część kółek. Zostań tutaj lub wróć do grafiku.</p>
+    <div style="display: flex; gap: 10px;">
+      <button class="btn" onclick="kontynuujPoPrzerwie()">Wznowię kurs</button>
+      <button class="btn" style="background: #21262d; color: #fff;" onclick="wrocDoMiesiaca()">Wróć do grafiku</button>
+    </div>
+  </div>
+
+  <!-- EKRAN JAZDY -->
+  <div id="app" style="display: none;">
     <div class="sidebar">
       <div class="driver-info">
-        <h3 id="disp-driver-id">Kierowca: -</h3>
-        <p id="disp-status">Status: Na zajezdni</p>
+        <h3 id="disp-driver-id">Kierowca</h3>
+        <p id="disp-status" style="font-size: 9px; color: #8b949e;">Status: Gotowy</p>
       </div>
-      <div class="schedule-title">Grafik:</div>
-      <div id="schedule-list"></div>
+      <button class="btn" style="background: #21262d; color: #fff; font-size: 10px;" onclick="wrocDoMiesiaca()">⬅ Widok Grafiku</button>
     </div>
 
-    <!-- PRAWY PANEL -->
     <div class="main-content">
       <div class="top-bar">
         <div>
           <span style="color: #8b949e; font-size: 10px;">LINIA:</span>
-          <strong id="active-line-name" style="color: #f28c28; font-size: 12px; margin-left: 4px;">Wybierz z grafiku</strong>
+          <strong id="active-line-name" style="color: #f28c28; font-size: 12px;">-</strong>
         </div>
-        <div class="clock-box" id="live-clock">00:00:00</div>
+        <div style="font-family: monospace; color: #2ea043; font-weight: bold;" id="live-clock">00:00:00</div>
       </div>
 
       <div class="timer-box">
@@ -222,39 +146,19 @@
         </div>
       </div>
 
-      <div class="stops-container" id="stops-list">
-        <div style="text-align: center; color: #8b949e; margin-top: 10px; font-size: 11px;">Wybierz linię po lewej stronie</div>
-      </div>
+      <div class="stops-container" id="stops-list"></div>
 
       <div class="action-buttons">
-        <button id="btn-start" class="btn" style="flex: 1;" onclick="startKurs()" disabled>ZACZNIJ KURS</button>
-        <button id="btn-next-stop" class="btn" style="flex: 1.2; background: #21262d; color: #fff; border: 1px solid #30363d;" onclick="zaliczPrzystanek()" disabled>NASTĘPNY PRZYSTANEK ✓</button>
+        <button id="btn-start" class="btn" style="flex: 1;" onclick="startKurs()">ZACZNIJ KURS</button>
+        <button id="btn-next-stop" class="btn" style="flex: 1.2; background: #21262d; color: #fff;" onclick="zaliczPrzystanek()" disabled>NASTĘPNY PRZYSTANEK ✓</button>
       </div>
     </div>
   </div>
 
   <script>
-    const mockData = {
-      "kierowca1": {
-        nazwa: "Jan Kowalski (102)",
-        linie: [
-          {
-            numer: "161",
-            relacja: "Zakładowa MPK ➔ Rondo Legionów",
-            kolek: 4,
-            przystanki: [
-              { nazwa: "Zakładowa MPK", czas_sek: 0 },
-              { nazwa: "Plac Wolności", czas_sek: 90 },
-              { nazwa: "Reja", czas_sek: 60 },
-              { nazwa: "Rondo Legionów Polskich", czas_sek: 120 }
-            ]
-          }
-        ]
-      }
-    };
-
     let aktualnyKierowca = null;
-    let wybralLinia = null;
+    let wybraneKonto = null;
+    let dzisiejszyGrafik = null;
     let aktywneKolko = 1;
     let aktualnyPrzystanekIndex = 0;
     let timerInterval = null;
@@ -265,57 +169,68 @@
     }, 1000);
 
     function zaloguj() {
-      const id = document.getElementById('driver-id').value.trim();
-      if (!id) return alert('Wpisz login!');
+      const login = document.getElementById('driver-login').value.trim().toLowerCase();
+      const db = JSON.parse(localStorage.getItem('mpk_db')) || { kierowcy: {}, grafiki: {} };
 
-      aktualnyKierowca = mockData[id] || {
-        nazwa: id,
-        linie: [
-          {
-            numer: "161",
-            relacja: "Zakładowa MPK ➔ Rondo Legionów",
-            kolek: 4,
-            przystanki: [
-              { nazwa: "Zakładowa MPK", czas_sek: 0 },
-              { nazwa: "Plac Wolności", czas_sek: 90 },
-              { nazwa: "Reja", czas_sek: 60 },
-              { nazwa: "Rondo Legionów Polskich", czas_sek: 120 }
-            ]
-          }
-        ]
-      };
+      if (!db.kierowcy[login]) return alert('Nie znaleziono takiego kierowcy! Poproś dyspozytora o założenie konta.');
+
+      aktualnyKierowca = db.kierowcy[login];
+      wybraneKonto = login;
 
       document.getElementById('login-screen').style.display = 'none';
-      document.getElementById('disp-driver-id').innerText = aktualnyKierowca.nazwa;
-      pobierzGrafik();
+      pokazMiesiac();
     }
 
-    function pobierzGrafik() {
-      const container = document.getElementById('schedule-list');
-      container.innerHTML = '';
-      aktualnyKierowca.linie.forEach((linia, idx) => {
-        container.innerHTML += `
-          <div class="route-card" onclick="wybierzLinie(${idx})">
-            <span class="route-badge">Linia ${linia.numer}</span>
-            <div style="font-size: 10px; margin-top: 3px; font-weight: bold;">${linia.relacja}</div>
-            <div style="font-size: 9px; color: #8b949e;">Kółka: ${linia.kolek}</div>
+    function wyloguj() {
+      document.getElementById('month-screen').style.display = 'none';
+      document.getElementById('login-screen').style.display = 'flex';
+    }
+
+    function pokazMiesiac() {
+      document.getElementById('month-screen').style.display = 'flex';
+      document.getElementById('app').style.display = 'none';
+      document.getElementById('month-driver-name').innerText = aktualnyKierowca.nazwa;
+
+      const db = JSON.parse(localStorage.getItem('mpk_db')) || { grafiki: {} };
+      const grafikiKierowcy = (db.grafiki[wybraneKonto]) ? db.grafiki[wybraneKonto] : {};
+
+      const grid = document.getElementById('calendar-grid');
+      grid.innerHTML = '';
+
+      for (let i = 1; i <= 31; i++) {
+        const d = grafikiKierowcy[i];
+        let content = d ? `<span class="day-badge">L. ${d.linia}</span><div style="font-size: 8px; color: #8b949e;">${d.kolek} kółka</div>` : '<span style="color: #444;">-</span>';
+        let btn = d ? `<button class="btn" style="padding: 2px; font-size: 8px; margin-top: 2px;" onclick="rozpocznijDzien(${i})">START</button>` : '';
+
+        grid.innerHTML += `
+          <div class="day-card ${d ? 'active-day' : ''}">
+            <strong>${i}</strong>
+            ${content}
+            ${btn}
           </div>
         `;
-      });
+      }
     }
 
-    function wybierzLinie(idx) {
-      wybralLinia = aktualnyKierowca.linie[idx];
-      document.getElementById('active-line-name').innerText = `Linia ${wybralLinia.numer}`;
-      document.getElementById('lap-counter').innerText = `1 / ${wybralLinia.kolek}`;
-      document.getElementById('btn-start').disabled = false;
+    function rozpocznijDzien(dzien) {
+      const db = JSON.parse(localStorage.getItem('mpk_db'));
+      dzisiejszyGrafik = db.grafiki[wybraneKonto][dzien];
+
+      document.getElementById('month-screen').style.display = 'none';
+      document.getElementById('app').style.display = 'flex';
+      document.getElementById('disp-driver-id').innerText = aktualnyKierowca.nazwa;
+      document.getElementById('active-line-name').innerText = `Linia ${dzisiejszyGrafik.linia}`;
+      document.getElementById('lap-counter').innerText = `1 / ${dzisiejszyGrafik.kolek}`;
+
+      aktywneKolko = 1;
+      aktualnyPrzystanekIndex = 0;
       wyswietlPrzystanki();
     }
 
     function wyswietlPrzystanki() {
       const container = document.getElementById('stops-list');
       container.innerHTML = '';
-      wybralLinia.przystanki.forEach((p, index) => {
+      dzisiejszyGrafik.przystanki.forEach((p, index) => {
         let statusClass = '';
         if (index < aktualnyPrzystanekIndex) statusClass = 'passed';
         if (index === aktualnyPrzystanekIndex) statusClass = 'current';
@@ -337,14 +252,13 @@
     function startKurs() {
       document.getElementById('btn-start').disabled = true;
       document.getElementById('btn-next-stop').disabled = false;
-      document.getElementById('disp-status').innerText = "Status: W trasie";
       startTimerForStop();
     }
 
     function startTimerForStop() {
       clearInterval(timerInterval);
       const nastepnyIndex = aktualnyPrzystanekIndex + 1;
-      pozostalyCzas = nastepnyIndex < wybralLinia.przystanki.length ? wybralLinia.przystanki[nastepnyIndex].czas_sek : 0;
+      pozostalyCzas = nastepnyIndex < dzisiejszyGrafik.przystanki.length ? dzisiejszyGrafik.przystanki[nastepnyIndex].czas_sek : 0;
 
       updateTimerDisplay();
       timerInterval = setInterval(() => {
@@ -364,25 +278,40 @@
     }
 
     function zaliczPrzystanek() {
-      if (aktualnyPrzystanekIndex < wybralLinia.przystanki.length - 1) {
+      if (aktualnyPrzystanekIndex < dzisiejszyGrafik.przystanki.length - 1) {
         aktualnyPrzystanekIndex++;
         wyswietlPrzystanki();
         startTimerForStop();
       } else {
         clearInterval(timerInterval);
-        if (aktywneKolko < wybralLinia.kolek) {
-          alert(`Koniec kółka ${aktywneKolko}! Start kółka ${aktywneKolko + 1}.`);
-          aktywneKolko++;
-          aktualnyPrzystanekIndex = 0;
-          document.getElementById('lap-counter').innerText = `${aktywneKolko} / ${wybralLinia.kolek}`;
-          wyswietlPrzystanki();
-          startTimerForStop();
+        if (aktywneKolko === dzisiejszyGrafik.przerwaPoKolku) {
+          document.getElementById('break-overlay').style.display = 'flex';
+        } else if (aktywneKolko < dzisiejszyGrafik.kolek) {
+          przejdzDoNastepnegoKolka();
         } else {
-          alert('Grafik zrobiony!');
-          document.getElementById('btn-next-stop').disabled = true;
-          document.getElementById('disp-status').innerText = "Status: Zakończono";
+          alert('Cały grafik na dziś zrealizowany!');
+          wrocDoMiesiaca();
         }
       }
+    }
+
+    function kontynuujPoPrzerwie() {
+      document.getElementById('break-overlay').style.display = 'none';
+      przejdzDoNastepnegoKolka();
+    }
+
+    function przejdzDoNastepnegoKolka() {
+      aktywneKolko++;
+      aktualnyPrzystanekIndex = 0;
+      document.getElementById('lap-counter').innerText = `${aktywneKolko} / ${dzisiejszyGrafik.kolek}`;
+      wyswietlPrzystanki();
+      startTimerForStop();
+    }
+
+    function wrocDoMiesiaca() {
+      document.getElementById('break-overlay').style.display = 'none';
+      document.getElementById('app').style.display = 'none';
+      pokazMiesiac();
     }
   </script>
 </body>
