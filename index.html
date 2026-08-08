@@ -7,42 +7,26 @@
 
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; user-select: none; }
-    body {
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    
+    html, body {
+      width: 100%;
+      height: 100dvh; /* Używamy dvh (dynamic viewport height) specjalnie pod telefony */
       background-color: #0d1117;
       color: #f0f6fc;
-      height: 100vh;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
       overflow: hidden;
+    }
+
+    /* Dopasowanie do wcięcia (Notcha) oraz pasków Safari/Chrome */
+    #app {
       display: flex;
+      width: 100vw;
+      height: 100dvh;
+      padding-top: env(safe-area-inset-top, 0px);
+      padding-bottom: env(safe-area-inset-bottom, 5px);
+      padding-left: env(safe-area-inset-left, 5px);
+      padding-right: env(safe-area-inset-right, 5px);
     }
-
-    /* Dopasowanie do bezpiecznej strefy iPhone (Notch / Pasek gestów) */
-    .iphone-mode {
-      padding-top: env(safe-area-inset-top);
-      padding-bottom: env(safe-area-inset-bottom);
-      padding-left: env(safe-area-inset-left);
-      padding-right: env(safe-area-inset-right);
-    }
-
-    /* OSTRZEŻENIE O PIONOWYM EKRANIE */
-    @media screen and (orientation: portrait) {
-      #rotate-warning { display: flex !important; }
-      #app { display: none !important; }
-    }
-
-    #rotate-warning {
-      display: none;
-      position: fixed;
-      inset: 0;
-      background: #0d1117;
-      z-index: 9999;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      text-align: center;
-      padding: 20px;
-    }
-    #rotate-warning h2 { color: #f28c28; margin-bottom: 10px; }
 
     /* EKRAN LOGOWANIA */
     #login-screen {
@@ -51,26 +35,24 @@
       background: #161b22;
       z-index: 1000;
       display: flex;
-      flex-direction: column;
       justify-content: center;
       align-items: center;
+      padding: 10px;
     }
     .login-card {
       background: #21262d;
-      padding: 20px;
+      padding: 15px;
       border-radius: 12px;
       border: 1px solid #30363d;
-      width: 320px;
+      width: 280px;
       text-align: center;
-      box-shadow: 0 8px 24px rgba(0,0,0,0.5);
     }
-    .login-card h2 { color: #f28c28; margin-bottom: 5px; font-size: 18px; }
-    .login-card p { color: #8b949e; font-size: 12px; margin-bottom: 15px; }
-    
-    .input-field, .select-field {
+    .login-card h2 { color: #f28c28; font-size: 16px; margin-bottom: 4px; }
+    .login-card p { color: #8b949e; font-size: 11px; margin-bottom: 12px; }
+    .input-field {
       width: 100%;
-      padding: 10px;
-      margin-bottom: 12px;
+      padding: 8px;
+      margin-bottom: 10px;
       background: #0d1117;
       border: 1px solid #30363d;
       border-radius: 6px;
@@ -78,46 +60,33 @@
       font-size: 13px;
     }
 
-    /* GŁÓWNY INTERFEJS POZIOMY */
-    #app {
-      display: flex;
-      width: 100vw;
-      height: 100vh;
-    }
-
-    /* LEWY PANEL */
+    /* LEWA STRONA (GRAFIK) */
     .sidebar {
-      width: 32%;
+      width: 28%;
       background: #161b22;
       border-right: 1px solid #30363d;
       display: flex;
       flex-direction: column;
-      padding: 10px;
+      padding: 6px;
+      gap: 6px;
+      overflow-y: auto;
     }
     .driver-info {
-      padding: 8px 10px;
+      padding: 6px;
       background: #21262d;
-      border-radius: 8px;
-      margin-bottom: 8px;
-      border-left: 4px solid #f28c28;
+      border-radius: 6px;
+      border-left: 3px solid #f28c28;
     }
-    .driver-info h3 { font-size: 13px; color: #fff; }
-    .driver-info p { font-size: 11px; color: #8b949e; }
+    .driver-info h3 { font-size: 11px; color: #fff; }
+    .driver-info p { font-size: 9px; color: #8b949e; }
 
-    .schedule-title {
-      font-size: 11px;
-      font-weight: bold;
-      color: #8b949e;
-      text-transform: uppercase;
-      margin: 4px 0;
-    }
+    .schedule-title { font-size: 9px; font-weight: bold; color: #8b949e; text-transform: uppercase; }
 
     .route-card {
       background: #21262d;
       border: 1px solid #30363d;
-      border-radius: 8px;
-      padding: 8px;
-      margin-bottom: 6px;
+      border-radius: 6px;
+      padding: 6px;
       cursor: pointer;
     }
     .route-card.active { border-color: #f28c28; background: #2b3038; }
@@ -125,162 +94,141 @@
       background: #f28c28;
       color: #000;
       font-weight: bold;
-      padding: 2px 6px;
-      border-radius: 4px;
-      font-size: 11px;
+      padding: 1px 4px;
+      border-radius: 3px;
+      font-size: 10px;
       display: inline-block;
     }
 
-    /* PRAWY PANEL */
+    /* PRAWA STRONA (EKRAN JAZDY) */
     .main-content {
-      width: 68%;
+      width: 72%;
       display: flex;
       flex-direction: column;
       background: #0d1117;
+      padding: 6px;
+      gap: 6px;
     }
 
     .top-bar {
       background: #161b22;
-      padding: 8px 12px;
+      padding: 4px 8px;
       display: flex;
       justify-content: space-between;
       align-items: center;
-      border-bottom: 1px solid #30363d;
+      border-radius: 6px;
+      border: 1px solid #30363d;
+      min-height: 28px;
     }
-    .clock-box { font-family: monospace; font-size: 18px; font-weight: bold; color: #2ea043; }
-    
-    .dashboard {
-      flex: 1;
-      padding: 10px;
+    .clock-box { font-family: monospace; font-size: 14px; font-weight: bold; color: #2ea043; }
+
+    .timer-box {
+      background: #21262d;
+      border-radius: 6px;
+      padding: 4px 8px;
       display: flex;
-      flex-direction: column;
       justify-content: space-between;
-      overflow: hidden;
+      align-items: center;
+      border: 1px solid #30363d;
     }
 
     .stops-container {
       background: #161b22;
       border: 1px solid #30363d;
-      border-radius: 8px;
-      padding: 8px;
-      flex: 1;
-      overflow-y: auto;
-      margin-bottom: 8px;
+      border-radius: 6px;
+      padding: 6px;
+      flex: 1; /* Wypełnia wolną przestrzeń */
+      overflow-y: auto; /* Daje możliwość przewijania listy przystanków */
     }
 
     .stop-item {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      padding: 8px 10px;
+      padding: 6px 8px;
       background: #21262d;
-      border-radius: 6px;
-      margin-bottom: 6px;
+      border-radius: 4px;
+      margin-bottom: 4px;
       border-left: 3px solid #58a6ff;
     }
     .stop-item.current { border-left-color: #f28c28; background: #2d333b; }
-    .stop-item.passed { border-left-color: #2ea043; opacity: 0.5; }
+    .stop-item.passed { border-left-color: #2ea043; opacity: 0.4; }
 
-    .timer-box {
-      background: #21262d;
-      border-radius: 8px;
-      padding: 8px 12px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 8px;
-    }
-
-    /* PRZYCISKI W
+    /* DOLNE PRZYCISKI - MOCNE I WIDOCZNE */
     .action-buttons {
       display: flex;
-      gap: 10px;
-      padding-bottom: 4px; /* margines na krawędź ekranu */
+      gap: 6px;
+      min-height: 38px;
     }
 
     .btn {
       background: #f28c28;
       color: #000;
       border: none;
-      padding: 10px;
-      font-size: 13px;
+      padding: 8px;
+      font-size: 12px;
       font-weight: bold;
       border-radius: 6px;
       cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
     }
-    .btn:disabled { background: #30363d; color: #8b949e; }
+    .btn:disabled { background: #21262d; color: #555; border: 1px solid #30363d; }
   </style>
 </head>
 <body>
-
-  <!-- OSTRZEŻENIE O PIONOWYM EKRANIE -->
-  <div id="rotate-warning">
-    <h2>📱 Obróć telefon!</h2>
-    <p>Aplikacja Drobin Urbanow MPK wymaga trybu poziomego.</p>
-  </div>
 
   <!-- OKNO LOGOWANIA -->
   <div id="login-screen">
     <div class="login-card">
       <h2>Drobin Urbanow MPK</h2>
-      <p>System Kierowcy v1.1</p>
-      
+      <p>System Kierowcy v1.2</p>
       <input type="text" id="driver-id" class="input-field" placeholder="Podaj Login Kierowcy...">
-      
-      <label style="font-size: 11px; color: #8b949e; display: block; text-align: left; margin-bottom: 4px;">TWÓJ SYSTEM TELEFONU:</label>
-      <select id="device-system" class="select-field">
-        <option value="android">📱 Android</option>
-        <option value="iphone">🍎 iPhone (iOS)</option>
-      </select>
-
       <button class="btn" style="width: 100%" onclick="zaloguj()">Zaloguj do Służby</button>
     </div>
   </div>
 
   <!-- APLIKACJA GŁÓWNA -->
   <div id="app">
-    <!-- LEWA STRONA -->
+    <!-- LEWY PANEL -->
     <div class="sidebar">
       <div class="driver-info">
         <h3 id="disp-driver-id">Kierowca: -</h3>
         <p id="disp-status">Status: Na zajezdni</p>
       </div>
-
-      <div class="schedule-title">Twój grafik:</div>
+      <div class="schedule-title">Grafik:</div>
       <div id="schedule-list"></div>
     </div>
 
-    <!-- PRAWA STRONA -->
+    <!-- PRAWY PANEL -->
     <div class="main-content">
       <div class="top-bar">
         <div>
-          <span style="color: #8b949e; font-size: 11px;">LINIA:</span>
-          <strong id="active-line-name" style="color: #f28c28; font-size: 14px; margin-left: 5px;">Brak</strong>
+          <span style="color: #8b949e; font-size: 10px;">LINIA:</span>
+          <strong id="active-line-name" style="color: #f28c28; font-size: 12px; margin-left: 4px;">Wybierz z grafiku</strong>
         </div>
         <div class="clock-box" id="live-clock">00:00:00</div>
       </div>
 
-      <div class="dashboard">
-        <div class="timer-box">
-          <div>
-            <span style="font-size: 10px; color: #8b949e; display: block;">POSTĘP KÓŁEK:</span>
-            <strong id="lap-counter" style="font-size: 14px; color: #58a6ff;">0 / 0</strong>
-          </div>
-          <div style="text-align: right;">
-            <span style="font-size: 10px; color: #8b949e; display: block;">DO NASTĘPNEGO PRZYSTANKU:</span>
-            <strong id="stop-timer" style="font-size: 18px; color: #2ea043;">00:00</strong>
-          </div>
+      <div class="timer-box">
+        <div>
+          <span style="font-size: 9px; color: #8b949e; display: block;">POSTĘP KÓŁEK:</span>
+          <strong id="lap-counter" style="font-size: 12px; color: #58a6ff;">0 / 0</strong>
         </div>
+        <div style="text-align: right;">
+          <span style="font-size: 9px; color: #8b949e; display: block;">DO PRZYSTANKU:</span>
+          <strong id="stop-timer" style="font-size: 15px; color: #2ea043;">00:00</strong>
+        </div>
+      </div>
 
-        <div class="stops-container" id="stops-list">
-          <div style="text-align: center; color: #8b949e; margin-top: 15px; font-size: 13px;">Wybierz linię z grafiku po lewej stronie</div>
-        </div>
+      <div class="stops-container" id="stops-list">
+        <div style="text-align: center; color: #8b949e; margin-top: 10px; font-size: 11px;">Wybierz linię po lewej stronie</div>
+      </div>
 
-        <!-- PRZYCISKI DOSTOSOWANE DLA OBU SYSTEMÓW -->
-        <div class="action-buttons">
-          <button id="btn-start" class="btn" style="flex: 1;" onclick="startKurs()" disabled>ZACZNIJ KURS</button>
-          <button id="btn-next-stop" class="btn" style="flex: 1; background: #21262d; color: #fff; border: 1px solid #30363d;" onclick="zaliczPrzystanek()" disabled>NASTĘPNY PRZYSTANEK ✓</button>
-        </div>
+      <div class="action-buttons">
+        <button id="btn-start" class="btn" style="flex: 1;" onclick="startKurs()" disabled>ZACZNIJ KURS</button>
+        <button id="btn-next-stop" class="btn" style="flex: 1.2; background: #21262d; color: #fff; border: 1px solid #30363d;" onclick="zaliczPrzystanek()" disabled>NASTĘPNY PRZYSTANEK ✓</button>
       </div>
     </div>
   </div>
@@ -288,18 +236,17 @@
   <script>
     const mockData = {
       "kierowca1": {
-        nazwa: "Jan Kowalski (ID: 102)",
+        nazwa: "Jan Kowalski (102)",
         linie: [
           {
             numer: "161",
             relacja: "Zakładowa MPK ➔ Rondo Legionów",
-            kolek: 3,
+            kolek: 4,
             przystanki: [
               { nazwa: "Zakładowa MPK", czas_sek: 0 },
               { nazwa: "Plac Wolności", czas_sek: 90 },
               { nazwa: "Reja", czas_sek: 60 },
-              { nazwa: "Brzechwy", czas_sek: 120 },
-              { nazwa: "Rondo Legionów Polskich", czas_sek: 150 }
+              { nazwa: "Rondo Legionów Polskich", czas_sek: 120 }
             ]
           }
         ]
@@ -314,19 +261,12 @@
     let pozostalyCzas = 0;
 
     setInterval(() => {
-      const now = new Date();
-      document.getElementById('live-clock').innerText = now.toLocaleTimeString();
+      document.getElementById('live-clock').innerText = new Date().toLocaleTimeString();
     }, 1000);
 
     function zaloguj() {
       const id = document.getElementById('driver-id').value.trim();
-      const system = document.getElementById('device-system').value;
       if (!id) return alert('Wpisz login!');
-
-      // Dostosowanie widoku pod iPhone
-      if (system === 'iphone') {
-        document.body.classList.add('iphone-mode');
-      }
 
       aktualnyKierowca = mockData[id] || {
         nazwa: id,
@@ -347,20 +287,18 @@
 
       document.getElementById('login-screen').style.display = 'none';
       document.getElementById('disp-driver-id').innerText = aktualnyKierowca.nazwa;
-      
       pobierzGrafik();
     }
 
     function pobierzGrafik() {
       const container = document.getElementById('schedule-list');
       container.innerHTML = '';
-
       aktualnyKierowca.linie.forEach((linia, idx) => {
         container.innerHTML += `
           <div class="route-card" onclick="wybierzLinie(${idx})">
             <span class="route-badge">Linia ${linia.numer}</span>
-            <div style="font-size: 11px; margin-top: 4px; font-weight: bold;">${linia.relacja}</div>
-            <div style="font-size: 10px; color: #8b949e; margin-top: 2px;">Kółka: ${linia.kolek}</div>
+            <div style="font-size: 10px; margin-top: 3px; font-weight: bold;">${linia.relacja}</div>
+            <div style="font-size: 9px; color: #8b949e;">Kółka: ${linia.kolek}</div>
           </div>
         `;
       });
@@ -371,14 +309,12 @@
       document.getElementById('active-line-name').innerText = `Linia ${wybralLinia.numer}`;
       document.getElementById('lap-counter').innerText = `1 / ${wybralLinia.kolek}`;
       document.getElementById('btn-start').disabled = false;
-
       wyswietlPrzystanki();
     }
 
     function wyswietlPrzystanki() {
       const container = document.getElementById('stops-list');
       container.innerHTML = '';
-
       wybralLinia.przystanki.forEach((p, index) => {
         let statusClass = '';
         if (index < aktualnyPrzystanekIndex) statusClass = 'passed';
@@ -387,10 +323,10 @@
         container.innerHTML += `
           <div class="stop-item ${statusClass}">
             <div>
-              <strong style="font-size: 12px;">${index + 1}. ${p.nazwa}</strong>
-              <div style="font-size: 10px; color: #8b949e;">Czas: ${p.czas_sek}s</div>
+              <strong style="font-size: 11px;">${index + 1}. ${p.nazwa}</strong>
+              <div style="font-size: 9px; color: #8b949e;">Czas: ${p.czas_sek}s</div>
             </div>
-            <div style="font-size: 11px; font-weight: bold;">
+            <div style="font-size: 10px; font-weight: bold;">
               ${index === aktualnyPrzystanekIndex ? '⬅ OBECNY' : ''}
             </div>
           </div>
@@ -402,22 +338,15 @@
       document.getElementById('btn-start').disabled = true;
       document.getElementById('btn-next-stop').disabled = false;
       document.getElementById('disp-status').innerText = "Status: W trasie";
-      
       startTimerForStop();
     }
 
     function startTimerForStop() {
       clearInterval(timerInterval);
-      
       const nastepnyIndex = aktualnyPrzystanekIndex + 1;
-      if (nastepnyIndex < wybralLinia.przystanki.length) {
-        pozostalyCzas = wybralLinia.przystanki[nastepnyIndex].czas_sek;
-      } else {
-        pozostalyCzas = 0;
-      }
+      pozostalyCzas = nastepnyIndex < wybralLinia.przystanki.length ? wybralLinia.przystanki[nastepnyIndex].czas_sek : 0;
 
       updateTimerDisplay();
-
       timerInterval = setInterval(() => {
         if (pozostalyCzas > 0) {
           pozostalyCzas--;
@@ -431,8 +360,7 @@
     function updateTimerDisplay() {
       const min = Math.floor(pozostalyCzas / 60);
       const sec = pozostalyCzas % 60;
-      document.getElementById('stop-timer').innerText = 
-        `${min.toString().padStart(2, '0')}:${sec.toString().padStart(2, '0')}`;
+      document.getElementById('stop-timer').innerText = `${min.toString().padStart(2, '0')}:${sec.toString().padStart(2, '0')}`;
     }
 
     function zaliczPrzystanek() {
@@ -443,14 +371,14 @@
       } else {
         clearInterval(timerInterval);
         if (aktywneKolko < wybralLinia.kolek) {
-          alert(`Koniec kółka ${aktywneKolko}! Zaczynasz kółko ${aktywneKolko + 1}.`);
+          alert(`Koniec kółka ${aktywneKolko}! Start kółka ${aktywneKolko + 1}.`);
           aktywneKolko++;
           aktualnyPrzystanekIndex = 0;
           document.getElementById('lap-counter').innerText = `${aktywneKolko} / ${wybralLinia.kolek}`;
           wyswietlPrzystanki();
           startTimerForStop();
         } else {
-          alert('Gratulacje! Zrealizowano cały grafik!');
+          alert('Grafik zrobiony!');
           document.getElementById('btn-next-stop').disabled = true;
           document.getElementById('disp-status').innerText = "Status: Zakończono";
         }
