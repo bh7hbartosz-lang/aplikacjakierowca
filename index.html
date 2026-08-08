@@ -2,13 +2,13 @@
 <html lang="pl">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
   <title>Drobin Urbanow MPK - Kierowca</title>
 
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; user-select: none; }
     body {
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
       background-color: #0d1117;
       color: #f0f6fc;
       height: 100vh;
@@ -16,7 +16,15 @@
       display: flex;
     }
 
-    /* Zmuszenie do widoku poziomego / powiadomienie o obrocie */
+    /* Dopasowanie do bezpiecznej strefy iPhone (Notch / Pasek gestów) */
+    .iphone-mode {
+      padding-top: env(safe-area-inset-top);
+      padding-bottom: env(safe-area-inset-bottom);
+      padding-left: env(safe-area-inset-left);
+      padding-right: env(safe-area-inset-right);
+    }
+
+    /* OSTRZEŻENIE O PIONOWYM EKRANIE */
     @media screen and (orientation: portrait) {
       #rotate-warning { display: flex !important; }
       #app { display: none !important; }
@@ -49,24 +57,25 @@
     }
     .login-card {
       background: #21262d;
-      padding: 25px;
+      padding: 20px;
       border-radius: 12px;
       border: 1px solid #30363d;
       width: 320px;
       text-align: center;
       box-shadow: 0 8px 24px rgba(0,0,0,0.5);
     }
-    .login-card h2 { color: #f28c28; margin-bottom: 5px; font-size: 20px; }
-    .login-card p { color: #8b949e; font-size: 12px; margin-bottom: 20px; }
-    .input-field {
+    .login-card h2 { color: #f28c28; margin-bottom: 5px; font-size: 18px; }
+    .login-card p { color: #8b949e; font-size: 12px; margin-bottom: 15px; }
+    
+    .input-field, .select-field {
       width: 100%;
       padding: 10px;
-      margin-bottom: 15px;
+      margin-bottom: 12px;
       background: #0d1117;
       border: 1px solid #30363d;
       border-radius: 6px;
       color: #fff;
-      font-size: 14px;
+      font-size: 13px;
     }
 
     /* GŁÓWNY INTERFEJS POZIOMY */
@@ -76,41 +85,40 @@
       height: 100vh;
     }
 
-    /* LEWY PANEL: GRAFIK I LINIE */
+    /* LEWY PANEL */
     .sidebar {
-      width: 30%;
+      width: 32%;
       background: #161b22;
       border-right: 1px solid #30363d;
       display: flex;
       flex-direction: column;
-      padding: 12px;
+      padding: 10px;
     }
     .driver-info {
-      padding: 10px;
+      padding: 8px 10px;
       background: #21262d;
       border-radius: 8px;
-      margin-bottom: 10px;
+      margin-bottom: 8px;
       border-left: 4px solid #f28c28;
     }
-    .driver-info h3 { font-size: 14px; color: #fff; }
+    .driver-info h3 { font-size: 13px; color: #fff; }
     .driver-info p { font-size: 11px; color: #8b949e; }
 
     .schedule-title {
-      font-size: 12px;
+      font-size: 11px;
       font-weight: bold;
       color: #8b949e;
       text-transform: uppercase;
-      margin: 8px 0 4px 0;
+      margin: 4px 0;
     }
 
     .route-card {
       background: #21262d;
       border: 1px solid #30363d;
       border-radius: 8px;
-      padding: 10px;
-      margin-bottom: 8px;
+      padding: 8px;
+      margin-bottom: 6px;
       cursor: pointer;
-      transition: 0.2s;
     }
     .route-card.active { border-color: #f28c28; background: #2b3038; }
     .route-badge {
@@ -119,13 +127,13 @@
       font-weight: bold;
       padding: 2px 6px;
       border-radius: 4px;
-      font-size: 12px;
+      font-size: 11px;
       display: inline-block;
     }
 
-    /* PRAWY PANEL: Pulpit Jazdy */
+    /* PRAWY PANEL */
     .main-content {
-      width: 70%;
+      width: 68%;
       display: flex;
       flex-direction: column;
       background: #0d1117;
@@ -133,37 +141,38 @@
 
     .top-bar {
       background: #161b22;
-      padding: 10px 15px;
+      padding: 8px 12px;
       display: flex;
       justify-content: space-between;
       align-items: center;
       border-bottom: 1px solid #30363d;
     }
-    .clock-box { font-family: monospace; font-size: 20px; font-weight: bold; color: #2ea043; }
+    .clock-box { font-family: monospace; font-size: 18px; font-weight: bold; color: #2ea043; }
     
     .dashboard {
       flex: 1;
-      padding: 15px;
+      padding: 10px;
       display: flex;
       flex-direction: column;
       justify-content: space-between;
+      overflow: hidden;
     }
 
     .stops-container {
       background: #161b22;
       border: 1px solid #30363d;
       border-radius: 8px;
-      padding: 10px;
+      padding: 8px;
       flex: 1;
       overflow-y: auto;
-      margin-bottom: 10px;
+      margin-bottom: 8px;
     }
 
     .stop-item {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      padding: 10px;
+      padding: 8px 10px;
       background: #21262d;
       border-radius: 6px;
       margin-bottom: 6px;
@@ -175,19 +184,26 @@
     .timer-box {
       background: #21262d;
       border-radius: 8px;
-      padding: 10px 15px;
+      padding: 8px 12px;
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-bottom: 10px;
+      margin-bottom: 8px;
+    }
+
+    /* PRZYCISKI W
+    .action-buttons {
+      display: flex;
+      gap: 10px;
+      padding-bottom: 4px; /* margines na krawędź ekranu */
     }
 
     .btn {
       background: #f28c28;
       color: #000;
       border: none;
-      padding: 12px 20px;
-      font-size: 14px;
+      padding: 10px;
+      font-size: 13px;
       font-weight: bold;
       border-radius: 6px;
       cursor: pointer;
@@ -200,65 +216,68 @@
   <!-- OSTRZEŻENIE O PIONOWYM EKRANIE -->
   <div id="rotate-warning">
     <h2>📱 Obróć telefon!</h2>
-    <p>Aplikacja Drobin Urbanow MPK wymaga trybu poziomego do prawidłowego działania.</p>
+    <p>Aplikacja Drobin Urbanow MPK wymaga trybu poziomego.</p>
   </div>
 
   <!-- OKNO LOGOWANIA -->
   <div id="login-screen">
     <div class="login-card">
       <h2>Drobin Urbanow MPK</h2>
-      <p>System Kierowcy v1.0</p>
+      <p>System Kierowcy v1.1</p>
+      
       <input type="text" id="driver-id" class="input-field" placeholder="Podaj Login Kierowcy...">
+      
+      <label style="font-size: 11px; color: #8b949e; display: block; text-align: left; margin-bottom: 4px;">TWÓJ SYSTEM TELEFONU:</label>
+      <select id="device-system" class="select-field">
+        <option value="android">📱 Android</option>
+        <option value="iphone">🍎 iPhone (iOS)</option>
+      </select>
+
       <button class="btn" style="width: 100%" onclick="zaloguj()">Zaloguj do Służby</button>
     </div>
   </div>
 
   <!-- APLIKACJA GŁÓWNA -->
   <div id="app">
-    <!-- LEWA STRONA: GRAFIK I LINIA -->
+    <!-- LEWA STRONA -->
     <div class="sidebar">
       <div class="driver-info">
         <h3 id="disp-driver-id">Kierowca: -</h3>
         <p id="disp-status">Status: Na zajezdni</p>
       </div>
 
-      <div class="schedule-title">Twój grafik na dziś:</div>
-      
-      <div id="schedule-list">
-        <!-- Generowane z JS -->
-      </div>
+      <div class="schedule-title">Twój grafik:</div>
+      <div id="schedule-list"></div>
     </div>
 
-    <!-- PRAWA STRONA: TRASA I STOPER -->
+    <!-- PRAWA STRONA -->
     <div class="main-content">
       <div class="top-bar">
         <div>
-          <span style="color: #8b949e; font-size: 12px;">AKTYWNA LINIA:</span>
-          <strong id="active-line-name" style="color: #f28c28; font-size: 16px; margin-left: 5px;">Brak</strong>
+          <span style="color: #8b949e; font-size: 11px;">LINIA:</span>
+          <strong id="active-line-name" style="color: #f28c28; font-size: 14px; margin-left: 5px;">Brak</strong>
         </div>
         <div class="clock-box" id="live-clock">00:00:00</div>
       </div>
 
       <div class="dashboard">
-        <!-- PODSUMOWANIE KÓŁEK I ODMIAR CZASU -->
         <div class="timer-box">
           <div>
-            <span style="font-size: 11px; color: #8b949e; display: block;">POSTĘP KÓŁEK:</span>
-            <strong id="lap-counter" style="font-size: 16px; color: #58a6ff;">0 / 0</strong>
+            <span style="font-size: 10px; color: #8b949e; display: block;">POSTĘP KÓŁEK:</span>
+            <strong id="lap-counter" style="font-size: 14px; color: #58a6ff;">0 / 0</strong>
           </div>
           <div style="text-align: right;">
-            <span style="font-size: 11px; color: #8b949e; display: block;">CZAS DO NASTĘPNEGO PRZYSTANKU:</span>
-            <strong id="stop-timer" style="font-size: 20px; color: #2ea043;">00:00</strong>
+            <span style="font-size: 10px; color: #8b949e; display: block;">DO NASTĘPNEGO PRZYSTANKU:</span>
+            <strong id="stop-timer" style="font-size: 18px; color: #2ea043;">00:00</strong>
           </div>
         </div>
 
-        <!-- LISTA PRZYSTANKÓW -->
         <div class="stops-container" id="stops-list">
-          <div style="text-align: center; color: #8b949e; margin-top: 20px;">Wybierz linię z grafiku po lewej stronie i kliknij "Zacznij Kurs"</div>
+          <div style="text-align: center; color: #8b949e; margin-top: 15px; font-size: 13px;">Wybierz linię z grafiku po lewej stronie</div>
         </div>
 
-        <!-- PRZYCISK STEROWANIA -->
-        <div style="display: flex; gap: 10px;">
+        <!-- PRZYCISKI DOSTOSOWANE DLA OBU SYSTEMÓW -->
+        <div class="action-buttons">
           <button id="btn-start" class="btn" style="flex: 1;" onclick="startKurs()" disabled>ZACZNIJ KURS</button>
           <button id="btn-next-stop" class="btn" style="flex: 1; background: #21262d; color: #fff; border: 1px solid #30363d;" onclick="zaliczPrzystanek()" disabled>NASTĘPNY PRZYSTANEK ✓</button>
         </div>
@@ -267,7 +286,6 @@
   </div>
 
   <script>
-    // PRZYKŁADOWA BAZA DANYCH GRAFIKU I PRZYSTANKÓW (Jako podgląd)
     const mockData = {
       "kierowca1": {
         nazwa: "Jan Kowalski (ID: 102)",
@@ -281,7 +299,7 @@
               { nazwa: "Plac Wolności", czas_sek: 90 },
               { nazwa: "Reja", czas_sek: 60 },
               { nazwa: "Brzechwy", czas_sek: 120 },
-              { nazwa: "Rondo Legionów", czas_sek: 150 }
+              { nazwa: "Rondo Legionów Polskich", czas_sek: 150 }
             ]
           }
         ]
@@ -295,7 +313,6 @@
     let timerInterval = null;
     let pozostalyCzas = 0;
 
-    // Zegar w czasie rzeczywistym
     setInterval(() => {
       const now = new Date();
       document.getElementById('live-clock').innerText = now.toLocaleTimeString();
@@ -303,9 +320,14 @@
 
     function zaloguj() {
       const id = document.getElementById('driver-id').value.trim();
+      const system = document.getElementById('device-system').value;
       if (!id) return alert('Wpisz login!');
 
-      // W prawdziwej wersji pobiera z Firebase
+      // Dostosowanie widoku pod iPhone
+      if (system === 'iphone') {
+        document.body.classList.add('iphone-mode');
+      }
+
       aktualnyKierowca = mockData[id] || {
         nazwa: id,
         linie: [
@@ -327,11 +349,6 @@
       document.getElementById('disp-driver-id').innerText = aktualnyKierowca.nazwa;
       
       pobierzGrafik();
-      
-      // Powiadomienie PWA
-      if ("Notification" in window && Notification.permission !== "granted") {
-        Notification.requestPermission();
-      }
     }
 
     function pobierzGrafik() {
@@ -342,8 +359,8 @@
         container.innerHTML += `
           <div class="route-card" onclick="wybierzLinie(${idx})">
             <span class="route-badge">Linia ${linia.numer}</span>
-            <div style="font-size: 12px; margin-top: 5px; font-weight: bold;">${linia.relacja}</div>
-            <div style="font-size: 11px; color: #8b949e; margin-top: 3px;">Zaplanowano kółek: ${linia.kolek}</div>
+            <div style="font-size: 11px; margin-top: 4px; font-weight: bold;">${linia.relacja}</div>
+            <div style="font-size: 10px; color: #8b949e; margin-top: 2px;">Kółka: ${linia.kolek}</div>
           </div>
         `;
       });
@@ -351,7 +368,7 @@
 
     function wybierzLinie(idx) {
       wybralLinia = aktualnyKierowca.linie[idx];
-      document.getElementById('active-line-name').innerText = `Linia ${wybralLinia.numer} (${wybralLinia.relacja})`;
+      document.getElementById('active-line-name').innerText = `Linia ${wybralLinia.numer}`;
       document.getElementById('lap-counter').innerText = `1 / ${wybralLinia.kolek}`;
       document.getElementById('btn-start').disabled = false;
 
@@ -370,10 +387,10 @@
         container.innerHTML += `
           <div class="stop-item ${statusClass}">
             <div>
-              <strong>${index + 1}. ${p.nazwa}</strong>
-              <div style="font-size: 11px; color: #8b949e;">Czas na dojazd: ${p.czas_sek} sek.</div>
+              <strong style="font-size: 12px;">${index + 1}. ${p.nazwa}</strong>
+              <div style="font-size: 10px; color: #8b949e;">Czas: ${p.czas_sek}s</div>
             </div>
-            <div style="font-size: 12px; font-weight: bold;">
+            <div style="font-size: 11px; font-weight: bold;">
               ${index === aktualnyPrzystanekIndex ? '⬅ OBECNY' : ''}
             </div>
           </div>
@@ -424,7 +441,6 @@
         wyswietlPrzystanki();
         startTimerForStop();
       } else {
-        // Koniec Kółka
         clearInterval(timerInterval);
         if (aktywneKolko < wybralLinia.kolek) {
           alert(`Koniec kółka ${aktywneKolko}! Zaczynasz kółko ${aktywneKolko + 1}.`);
@@ -434,9 +450,9 @@
           wyswietlPrzystanki();
           startTimerForStop();
         } else {
-          alert('Gratulacje! Zrealizowano cały grafik na tę linię!');
+          alert('Gratulacje! Zrealizowano cały grafik!');
           document.getElementById('btn-next-stop').disabled = true;
-          document.getElementById('disp-status').innerText = "Status: Zakończono grafik";
+          document.getElementById('disp-status').innerText = "Status: Zakończono";
         }
       }
     }
