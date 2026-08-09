@@ -36,7 +36,7 @@
       padding-bottom: env(safe-area-inset-bottom, 0px);
     }
 
-    /* TŁO I EKRAN LOGOWANIA - NA ŚRODKU Z EFEKTEM LIQUID GLASS */
+    /* EKRAN LOGOWANIA - LIQUID GLASS & CENTERED */
     #login-screen {
       position: fixed; inset: 0;
       background: radial-gradient(circle at 50% 50%, #4a0911 0%, #210307 50%, #080102 100%);
@@ -46,52 +46,49 @@
       overflow: hidden;
     }
 
-    /* PŁYNNE BORDOWE ŚWIATŁA W TLE (LIQUID BLUR) */
     #login-screen::before {
       content: '';
-      position: absolute; width: 350px; height: 350px;
-      background: radial-gradient(circle, rgba(125,24,32,0.6) 0%, rgba(0,0,0,0) 70%);
-      top: 20%; left: 30%; filter: blur(60px); animation: floatGlow 8s infinite alternate ease-in-out;
+      position: absolute; width: 380px; height: 380px;
+      background: radial-gradient(circle, rgba(125,24,32,0.65) 0%, rgba(0,0,0,0) 70%);
+      top: 15%; left: 25%; filter: blur(60px); animation: floatGlow 8s infinite alternate ease-in-out;
     }
 
     @keyframes floatGlow {
       0% { transform: translate(0, 0) scale(1); }
-      100% { transform: translate(40px, 30px) scale(1.2); }
+      100% { transform: translate(50px, 35px) scale(1.25); }
     }
 
-    /* KARTA LOGOWANIA - MODERN LIQUID GLASS */
+    /* KARTA LOGOWANIA - GLASSMORPHISM */
     .login-container {
       position: relative;
       width: 100%; max-width: 380px;
-      background: rgba(30, 5, 9, 0.45);
+      background: rgba(25, 4, 8, 0.5);
       backdrop-filter: blur(25px) saturate(180%);
       -webkit-backdrop-filter: blur(25px) saturate(180%);
       border: 1px solid rgba(255, 255, 255, 0.12);
       border-top: 1px solid rgba(255, 255, 255, 0.25);
       border-left: 1px solid rgba(255, 255, 255, 0.2);
-      border-radius: 32px; padding: 40px 30px;
+      border-radius: 32px; padding: 36px 28px;
       box-shadow: 0 30px 60px rgba(0, 0, 0, 0.8), 
                   inset 0 1px 0 rgba(255, 255, 255, 0.2),
-                  0 0 40px rgba(92, 18, 24, 0.35);
+                  0 0 45px rgba(92, 18, 24, 0.4);
       text-align: center;
     }
 
-    /* LOGO I NAGŁÓWEK */
+    /* WEKTOROWE LOGO MPK DROBIN BEZ TŁA */
     .brand-header { 
-      margin-bottom: 28px; 
+      margin-bottom: 24px; 
       display: flex; flex-direction: column; align-items: center; 
     }
     
-    .brand-logo-img {
-      width: 220px;
-      height: auto;
-      display: block;
-      margin-bottom: 12px;
-      filter: drop-shadow(0 6px 12px rgba(0,0,0,0.6));
+    .brand-logo-svg {
+      width: 240px; height: auto;
+      display: block; margin-bottom: 10px;
+      filter: drop-shadow(0 6px 12px rgba(0,0,0,0.7));
     }
 
     .brand-title { 
-      font-size: 16px; font-weight: 700; color: #ffffff;
+      font-size: 15px; font-weight: 700; color: #ffffff;
       opacity: 0.95; letter-spacing: -0.2px;
     }
 
@@ -173,7 +170,29 @@
   <div id="login-screen">
     <div class="login-container">
       <div class="brand-header">
-        <img src="Gemini_Generated_Image_tk6lp5tk6lp5tk6l(1).png" alt="MPK DROBIN" class="brand-logo-img">
+        <!-- WEKTOROWE MPK DROBIN BEZ TŁA -->
+        <svg class="brand-logo-svg" viewBox="0 0 500 220" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <linearGradient id="maroonGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stop-color="#8a1c24"/>
+              <stop offset="50%" stop-color="#5c1218"/>
+              <stop offset="100%" stop-color="#3b0a0e"/>
+            </linearGradient>
+            <filter id="shadow3d" x="-10%" y="-10%" width="130%" height="130%">
+              <feDropShadow dx="3" dy="5" stdDeviation="3" flood-color="#000000" flood-opacity="0.8"/>
+            </filter>
+          </defs>
+          <g filter="url(#shadow3d)" fill="url(#maroonGrad)" stroke="#2b070a" stroke-width="2">
+            <!-- M -->
+            <path d="M 20 20 L 70 20 L 120 110 L 170 20 L 220 20 L 220 150 L 175 150 L 175 65 L 132 145 L 108 145 L 65 65 L 65 150 L 20 150 Z" />
+            <!-- P -->
+            <path d="M 228 20 L 310 20 C 350 20 360 45 360 70 C 360 98 345 120 310 120 L 273 120 L 273 150 L 228 150 Z M 273 55 L 273 85 L 302 85 C 315 85 320 78 320 70 C 320 62 315 55 302 55 Z" />
+            <!-- K -->
+            <path d="M 368 20 L 413 20 L 413 70 L 452 20 L 500 20 L 448 80 L 500 150 L 452 150 L 413 95 L 413 150 L 368 150 Z" />
+          </g>
+          <!-- DROBIN -->
+          <text x="260" y="195" font-family="'Plus Jakarta Sans', sans-serif" font-weight="900" font-size="34" fill="url(#maroonGrad)" stroke="#2b070a" stroke-width="1" letter-spacing="12" text-anchor="middle" filter="url(#shadow3d)">DROBIN</text>
+        </svg>
         <div class="brand-title">Aplikacja dla kierowcy</div>
       </div>
 
