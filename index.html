@@ -100,7 +100,6 @@
     /* LAYOUT APLIKACJI GŁÓWNEJ */
     #main-layout { display: none; width: 100vw; height: 100dvh; position: relative; z-index: 2; }
 
-    /* PRZYCISK MENU (HAMBURGER) U GÓRY */
     .toggle-sidebar-btn {
       position: absolute; top: 20px; left: 20px; z-index: 100;
       background: rgba(255, 255, 255, 0.08); border: 1px solid rgba(255, 255, 255, 0.15);
@@ -111,7 +110,7 @@
     }
     .toggle-sidebar-btn:hover { background: rgba(138, 28, 36, 0.4); }
 
-    /* SIDEBAR WITH LIQUID GLASS */
+    /* SIDEBAR */
     .sidebar-menu {
       width: 290px; height: 100%;
       background: var(--glass-bg); backdrop-filter: blur(35px) saturate(180%);
@@ -122,14 +121,8 @@
       transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1), margin-left 0.4s cubic-bezier(0.4, 0, 0.2, 1);
     }
 
-    .sidebar-menu.hidden {
-      margin-left: -290px;
-    }
-
-    .sidebar-logo {
-      display: flex; justify-content: center; align-items: center; margin-bottom: 25px; margin-top: 35px;
-    }
-
+    .sidebar-menu.hidden { margin-left: -290px; }
+    .sidebar-logo { display: flex; justify-content: center; align-items: center; margin-bottom: 25px; margin-top: 35px; }
     .nav-list { display: flex; flex-direction: column; gap: 8px; }
 
     .nav-item {
@@ -138,7 +131,6 @@
       color: #ffffff; font-weight: 600; font-size: 15px;
       cursor: pointer; transition: all 0.25s ease;
     }
-
     .nav-item:hover { background: rgba(255, 255, 255, 0.05); transform: translateX(3px); }
 
     .nav-item.active {
@@ -188,7 +180,7 @@
     .stat-val { font-size: 36px; font-weight: 800; color: #fff; margin-top: 10px; }
     .stat-lbl { font-size: 14px; color: var(--text-dim); font-weight: 600; }
 
-    /* LISTA PRZYSTANKÓW DLA KURSU */
+    /* LISTA PRZYSTANKÓW */
     .stops-scroll {
       flex: 1; background: rgba(0,0,0,0.4); border: 1px solid rgba(255,255,255,0.08);
       border-radius: 20px; padding: 20px; overflow-y: auto; margin: 20px 0;
@@ -216,13 +208,23 @@
     }
     .btn-action:hover { transform: translateY(-2px); box-shadow: 0 8px 25px rgba(138, 28, 36, 0.5); }
 
-    /* POWIADOMIENIA */
+    /* KOMUNIKAT ŚRODKOWY (UKOŃCZONE KÓŁKO) */
+    .loop-overlay {
+      display: none;
+      position: absolute; inset: 0;
+      background: rgba(0, 0, 0, 0.85); backdrop-filter: blur(15px);
+      z-index: 50; border-radius: 24px;
+      flex-direction: column; justify-content: center; align-items: center;
+      text-align: center; padding: 30px;
+    }
+
     .notif-item {
       background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08);
       border-radius: 16px; padding: 18px; margin-bottom: 12px;
       display: flex; justify-content: space-between; align-items: center;
     }
 
+    /* SIATKA KALENDARZA GRAFIKU */
     .calendar-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 10px; margin-top: 15px; }
     .day-box {
       background: rgba(0, 0, 0, 0.5); border: 1px solid rgba(255, 255, 255, 0.08);
@@ -279,13 +281,11 @@
     <div class="bg-glow-top-right"></div>
     <div class="bg-glow-bottom-left"></div>
 
-    <!-- PRZYCISK HAMBURGERA DO UKRYWANIA / POKAZYWANIA SIDEBARA -->
     <button class="toggle-sidebar-btn" onclick="toggleSidebar()" title="Przełącz Menu">☰</button>
 
     <!-- SIDEBAR -->
     <div class="sidebar-menu" id="sidebar">
       <div>
-        <!-- LOGO MPK DROBIN NA SAMEJ GÓRZE SIDEBARA -->
         <div class="sidebar-logo">
           <svg class="brand-logo-svg" style="width: 170px;" viewBox="0 0 500 220" xmlns="http://www.w3.org/2000/svg">
             <g fill="url(#maroonGrad)" stroke="#1a0406" stroke-width="2">
@@ -334,7 +334,7 @@
           <div class="glass-card">
             <div class="stat-lbl">DZISIEJSZA LINIA</div>
             <div class="stat-val" style="color: #ff4d4d;">Linia 161</div>
-            <p style="color: var(--text-dim); margin-top: 8px; font-size: 13px;">Trasa: Centrum ➔ Północ</p>
+            <p style="color: var(--text-dim); margin-top: 8px; font-size: 13px;" id="route-dir-desc">Trasa: Północ ➔ Południe</p>
           </div>
 
           <div class="glass-card">
@@ -350,22 +350,13 @@
           </div>
         </div>
 
-        <!-- MODUŁ POWIADOMIEŃ OD DYSPOZYTORA ON PAGE -->
         <div class="glass-card">
           <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
             <h3 style="font-size: 18px;">Ostatnie Powiadomienia od Dyspozytora</h3>
             <button class="btn-action" style="padding: 8px 16px; font-size: 12px;" onclick="testPowiadomienie()">Test Dźwięku i Powiadomienia 🔔</button>
           </div>
 
-          <div id="home-notif-list">
-            <div class="notif-item">
-              <div>
-                <strong>Dyspozytor Centralny</strong>
-                <p style="color: var(--text-dim); font-size: 13px; margin-top: 4px;">Pamiętaj o zarejestrowaniu wyjazdu z zajezdni o 14:00.</p>
-              </div>
-              <button class="btn-action" style="padding: 6px 12px; font-size: 12px;" onclick="czytajTekst('Dyspozytor Centralny mówi: Pamiętaj o zarejestrowaniu wyjazdu z zajezdni o 14:00.')">🔊 Czytaj</button>
-            </div>
-          </div>
+          <div id="home-notif-list"></div>
         </div>
       </div>
 
@@ -382,11 +373,19 @@
 
       <!-- WIDOK 3: DZISIEJSZY KURS -->
       <div id="view-kurs" class="view-section">
-        <div class="glass-card" style="height: 100%; display: flex; flex-direction: column;">
+        <div class="glass-card" style="height: 100%; display: flex; flex-direction: column; position: relative;">
+          
+          <!-- KOMUNIKAT NA ŚRODKU PO UKOŃCZENIU KÓŁKA -->
+          <div class="loop-overlay" id="loop-overlay">
+            <h1 style="font-size: 42px; margin-bottom: 10px; color: #fff;" id="overlay-title">Skończono 1 z 5 kółek!</h1>
+            <p style="font-size: 18px; color: var(--text-dim); margin-bottom: 30px;" id="overlay-desc">Następne kółko będzie jechać w odwrotnym kierunku.</p>
+            <button class="btn-action" id="btn-next-loop-action" style="font-size: 18px; padding: 18px 36px;" onclick="rozpocznijKolejneKolko()">Zacznij kolejny kurs ▶</button>
+          </div>
+
           <div style="display: flex; justify-content: space-between; align-items: center;">
             <div>
-              <span style="color: var(--text-dim); font-size: 12px; font-weight: 700;">AKTYWNA LINIA</span>
-              <h2 style="font-size: 28px; color: #fff;">Linia 161 (Centrum ➔ Północ)</h2>
+              <span style="color: var(--text-dim); font-size: 12px; font-weight: 700;">AKTYWNA LINIA 161 (KÓŁKO <span id="current-loop-num">1</span>/5)</span>
+              <h2 style="font-size: 26px; color: #fff;" id="active-route-title">Północ ➔ Południe</h2>
             </div>
             <div style="text-align: right;">
               <span style="color: var(--text-dim); font-size: 12px; font-weight: 700;">DO NASTĘPNEGO PRZYSTANKU</span>
@@ -403,7 +402,7 @@
         </div>
       </div>
 
-      <!-- WIDOK 4: PROŚBY (NA CAŁĄ STRONĘ) -->
+      <!-- WIDOK 4: PROŚBY -->
       <div id="view-prosby" class="view-section">
         <div class="glass-card" style="width: 100%; height: 100%; display: flex; flex-direction: column;">
           <h2 style="font-size: 26px; margin-bottom: 8px;">Zgłoszenie / Prośba do Dyspozytora</h2>
@@ -428,14 +427,11 @@
         </div>
       </div>
 
-      <!-- WIDOK 5: POWIADOMIENIA (ROZWINIĘTE NA CAŁĄ STRONĘ) -->
+      <!-- WIDOK 5: POWIADOMIENIA -->
       <div id="view-powiadomienia" class="view-section">
         <div class="glass-card" style="width: 100%; height: 100%; display: flex; flex-direction: column;">
           <h2 style="font-size: 26px; margin-bottom: 20px;">Centrum Powiadomień od Dyspozytora</h2>
-
-          <div id="full-notif-list" style="flex: 1; overflow-y: auto;">
-            <!-- DYNAMICZNA LISTA -->
-          </div>
+          <div id="full-notif-list" style="flex: 1; overflow-y: auto;"></div>
         </div>
       </div>
 
@@ -446,21 +442,29 @@
     let uzytkownikName = "Jan Kowalski";
     let sidebarHidden = false;
 
-    let listaPrzystankow = [
-      { nazwa: "1. Zajezdnia MPK Drobin", czas: 15 },
-      { nazwa: "2. Plac Wolności", czas: 20 },
-      { nazwa: "3. Ul. Warszawska", czas: 15 },
-      { nazwa: "4. Dworzec Kolejowy", czas: 25 },
-      { nazwa: "5. Osiedle Północ (Pętla)", czas: 10 }
+    // DEFINICJA TRAS
+    const trasaPolnocPoludnie = [
+      { nazwa: "1. Północ (Pętla Startowa)", czas: 12 },
+      { nazwa: "2. Rondo", czas: 15 },
+      { nazwa: "3. Szpital", czas: 15 },
+      { nazwa: "4. Południe (Pętla Końcowa)", czas: 10 }
     ];
+
+    const trasaPoludniePolnoc = [
+      { nazwa: "1. Południe (Pętla Startowa)", czas: 12 },
+      { nazwa: "2. Szpital", czas: 15 },
+      { nazwa: "3. Rondo", czas: 15 },
+      { nazwa: "4. Północ (Pętla Końcowa)", czas: 10 }
+    ];
+
+    let currentLoopCount = 0;
     let currentStopIndex = 0;
     let timerInterval = null;
     let timeRemaining = 0;
-    let completedLoops = 0;
 
     let powiadomienia = [
       { id: 1, nadawca: "Dyspozytor - Marek", tresc: "Twoja prośba o zmianę na dzień 15 sierpnia została ZAAKCEPTOWANA.", czas: "10:15" },
-      { id: 2, nadawca: "System MPK", tresc: "Dzisiaj masz przydzieloną Linię 161. Do zrobienia 5 kółek.", czas: "06:00" }
+      { id: 2, nadawca: "System MPK", tresc: "Dzisiaj masz przydzieloną Linię 161. Do zrobienia dokładnie 5 kółek.", czas: "06:00" }
     ];
 
     // ZEGAR I DATA
@@ -493,7 +497,6 @@
       clearInterval(timerInterval);
     }
 
-    // CHOWANIE / POKAZYWANIE SIDEBARA
     function toggleSidebar() {
       const sidebar = document.getElementById('sidebar');
       sidebarHidden = !sidebarHidden;
@@ -504,7 +507,6 @@
       }
     }
 
-    // PRZEŁĄCZANIE WIDOKÓW
     function pokazWidok(viewName) {
       document.querySelectorAll('.view-section').forEach(sec => sec.classList.remove('active-view'));
       document.querySelectorAll('.nav-item').forEach(item => item.classList.remove('active'));
@@ -529,12 +531,21 @@
       }, 50);
     }
 
-    // LOGIKA KURSU I PRZYSTANKÓW
+    function getAktualnaTrasa() {
+      return (currentLoopCount % 2 === 0) ? trasaPolnocPoludnie : trasaPoludniePolnoc;
+    }
+
     function renderStops() {
+      const trasa = getAktualnaTrasa();
       const container = document.getElementById('stops-list');
       container.innerHTML = '';
 
-      listaPrzystankow.forEach((p, index) => {
+      const isForward = (currentLoopCount % 2 === 0);
+      document.getElementById('active-route-title').innerText = isForward ? "Północ ➔ Południe" : "Południe ➔ Północ";
+      document.getElementById('route-dir-desc').innerText = `Trasa: ${isForward ? "Północ ➔ Południe" : "Południe ➔ Północ"}`;
+      document.getElementById('current-loop-num').innerText = Math.min(currentLoopCount + 1, 5);
+
+      trasa.forEach((p, index) => {
         let cls = '';
         if (index < currentStopIndex) cls = 'passed';
         if (index === currentStopIndex) cls = 'active';
@@ -543,20 +554,26 @@
           <div class="stop-row ${cls}">
             <div>
               <strong>${p.nazwa}</strong>
-              <div style="font-size: 11px; color: var(--text-dim); margin-top: 3px;">Czas postoju/przejazdu: ${p.czas} sek.</div>
+              <div style="font-size: 11px; color: var(--text-dim); margin-top: 3px;">Czas do odjazdu: ${p.czas} sek.</div>
             </div>
-            <span style="font-weight: 700;">${index < currentStopIndex ? 'OBLOT ✓' : (index === currentStopIndex ? 'TERAZ' : 'OCZEKUJE')}</span>
+            <span style="font-weight: 700;">${index < currentStopIndex ? 'ZALICZONY ✓' : (index === currentStopIndex ? 'OBECNY PRZYSTANEK' : 'OCZEKUJE')}</span>
           </div>
         `;
       });
     }
 
     function startJazda() {
-      // Automatyczne chowanie sidebara przy starcie kursu
+      if (currentLoopCount >= 5) {
+        alert("Wszystkie 5 kółek na dzisiaj zostało już ukończone!");
+        return;
+      }
+
       if (!sidebarHidden) toggleSidebar();
 
       document.getElementById('status-text').innerText = "W trakcie kursu";
       document.getElementById('status-text').style.color = "#ff3344";
+      document.getElementById('loop-overlay').style.display = 'none';
+
       currentStopIndex = 0;
       renderStops();
       startTimerForStop();
@@ -564,16 +581,14 @@
 
     function startTimerForStop() {
       clearInterval(timerInterval);
-      if (currentStopIndex >= listaPrzystankow.length) {
-        completedLoops++;
-        document.getElementById('completed-loops').innerText = completedLoops;
-        alert(`Koniec kółka! Ukończono ${completedLoops} z 5 kółek.`);
-        document.getElementById('status-text').innerText = "Gotowy";
-        document.getElementById('status-text').style.color = "#2ea043";
+      const trasa = getAktualnaTrasa();
+
+      if (currentStopIndex >= trasa.length) {
+        pokazKoniecKolka();
         return;
       }
 
-      timeRemaining = listaPrzystankow[currentStopIndex].czas;
+      timeRemaining = trasa[currentStopIndex].czas;
       updateTimerDisplay();
 
       timerInterval = setInterval(() => {
@@ -582,7 +597,7 @@
 
         if (timeRemaining <= 0) {
           clearInterval(timerInterval);
-          nastPrzystanek(); // Automatyczne przejście do następnego po odliczeniu czasu
+          nastPrzystanek();
         }
       }, 1000);
     }
@@ -594,7 +609,9 @@
     }
 
     function nastPrzystanek() {
-      if (currentStopIndex < listaPrzystankow.length - 1) {
+      const trasa = getAktualnaTrasa();
+
+      if (currentStopIndex < trasa.length - 1) {
         currentStopIndex++;
         renderStops();
         startTimerForStop();
@@ -602,10 +619,39 @@
         clearInterval(timerInterval);
         currentStopIndex++;
         renderStops();
-        completedLoops++;
-        document.getElementById('completed-loops').innerText = completedLoops;
-        alert(`Koniec kursu! Kółko ${completedLoops}/5 zaliczone.`);
+        pokazKoniecKolka();
       }
+    }
+
+    function pokazKoniecKolka() {
+      currentLoopCount++;
+      document.getElementById('completed-loops').innerText = currentLoopCount;
+
+      const overlay = document.getElementById('loop-overlay');
+      const title = document.getElementById('overlay-title');
+      const desc = document.getElementById('overlay-desc');
+      const btn = document.getElementById('btn-next-loop-action');
+
+      overlay.style.display = 'flex';
+
+      if (currentLoopCount < 5) {
+        title.innerText = `Skończono ${currentLoopCount} z 5 kółek!`;
+        desc.innerText = `Następny kurs rozpocznie się z przystanku: ${currentLoopCount % 2 === 0 ? 'Północ' : 'Południe'}`;
+        btn.innerText = "Zacznij kolejny kurs ▶";
+        btn.style.display = "inline-flex";
+      } else {
+        title.innerText = `Ukończono wszystkie 5 z 5 kółek! 🎉`;
+        desc.innerText = "Świetna robota! Twój dzień pracy został zakończony.";
+        btn.style.display = "none";
+        document.getElementById('status-text').innerText = "Zakończono służbę";
+        document.getElementById('status-text').style.color = "#2ea043";
+      }
+    }
+
+    function rozpocznijKolejneKolko() {
+      if (currentLoopCount >= 5) return;
+      document.getElementById('loop-overlay').style.display = 'none';
+      startJazda();
     }
 
     // PROŚBY DO DYSPOZYTORA
@@ -621,13 +667,11 @@
       alert("Twoja prośba została wysłana do dyspozytora. Czekaj na odpowiedź.");
       document.getElementById('p-powod').value = "";
 
-      // Symulacja odpowiedzi dyspozytora po 3 sekundach
       setTimeout(() => {
         odpowiedzOdDyspozytora(`Odpowiedź ws. (${typ}): Dyspozytor przyjął zgłoszenie. Powód: "${powod}". Zgoda wydana.`);
       }, 3000);
     }
 
-    // GENEROWANIE POWIADOMIENIA I DŹWIĘKU
     function odpowiedzOdDyspozytora(tekst) {
       playBeepSound();
       const now = new Date();
@@ -667,7 +711,6 @@
         fullList.innerHTML += itemHtml;
       });
 
-      // Pokaż pierwsze na stronie głównej
       if (powiadomienia.length > 0) {
         const first = powiadomienia[0];
         homeList.innerHTML = `
@@ -682,10 +725,9 @@
       }
     }
 
-    // SYNTEZATOR MOWY (LEKTOR CZYTAJĄCY TEXT-TO-SPEECH)
     function czytajTekst(tekst) {
       if ('speechSynthesis' in window) {
-        window.speechSynthesis.cancel(); // zatrzymaj poprzednie
+        window.speechSynthesis.cancel();
         const utterance = new SpeechSynthesisUtterance(tekst);
         utterance.lang = 'pl-PL';
         utterance.rate = 1.0;
@@ -695,7 +737,6 @@
       }
     }
 
-    // GENEROWANIE DŹWIĘKU POWIADOMIENIA (WEB AUDIO API)
     function playBeepSound() {
       try {
         const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
@@ -703,7 +744,7 @@
         const gain = audioCtx.createGain();
 
         osc.type = 'sine';
-        osc.frequency.setValueAtTime(880, audioCtx.currentTime); // Nutka A5
+        osc.frequency.setValueAtTime(880, audioCtx.currentTime);
         gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
 
         osc.connect(gain);
@@ -712,7 +753,7 @@
         osc.start();
         osc.stop(audioCtx.currentTime + 0.3);
       } catch (e) {
-        console.log("Audio not allowed yet");
+        console.log("Audio API nieaktywne");
       }
     }
 
@@ -720,17 +761,48 @@
       odpowiedzOdDyspozytora("To jest testowe powiadomienie od dyspozytora MPK Drobin.");
     }
 
+    // GENEROWANIE KALENDARZA DLA SIERPNIA 2026 (ZAKŁADA START W SOBOTĘ)
     function generujKalendarz() {
       const grid = document.getElementById('cal-grid');
       if (!grid) return;
       grid.innerHTML = '';
+
+      // 1. Dni tygodnia (Nagłówek)
+      const dniTygodnia = ['Pon', 'Wt', 'Śr', 'Czw', 'Pt', 'Sob', 'Nie'];
+      dniTygodnia.forEach(dzien => {
+        grid.innerHTML += `
+          <div style="text-align: center; font-weight: 800; font-size: 13px; color: var(--text-dim); padding-bottom: 8px;">
+            ${dzien}
+          </div>
+        `;
+      });
+
+      // 2. Puste pola przed 1 sierpnia (1 sierpnia 2026 to Sobota -> 5 pustych dni)
+      const pusteDniRozpoczecia = 5; 
+      for (let i = 0; i < pusteDniRozpoczecia; i++) {
+        grid.innerHTML += `<div style="background: transparent;"></div>`;
+      }
+
+      // 3. Generowanie 31 dni Sierpnia 2026
       for (let i = 1; i <= 31; i++) {
-        const isWork = i % 2 === 0;
+        const dzienTygodniaIndex = (pusteDniRozpoczecia + i - 1) % 7; 
+        const czyWeekend = (dzienTygodniaIndex === 5 || dzienTygodniaIndex === 6);
+        const isWork = (i % 2 === 0) && dzienTygodniaIndex !== 6; 
+
         grid.innerHTML += `
           <div class="day-box ${isWork ? 'work' : ''}">
-            <strong>Dzień ${i}</strong>
-            <span style="font-size: 11px; color: ${isWork ? '#ff4d4d' : '#2ea043'}">${isWork ? 'Linia 161 (5 kółek)' : 'WOLNE'}</span>
-            ${isWork ? `<button style="background: rgba(255,255,255,0.1); border:none; color:#fff; font-size:9px; padding:3px; border-radius:4px; cursor:pointer; margin-top:4px;" onclick="pokazWidok('kurs'); startJazda();">▶ Zacznij</button>` : ''}
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+              <strong style="font-size: 14px;">${i}</strong>
+              <span style="font-size: 10px; color: var(--text-dim);">${dniTygodnia[dzienTygodniaIndex]}</span>
+            </div>
+            <span style="font-size: 11px; font-weight: 700; color: ${isWork ? '#ff4d4d' : (czyWeekend ? '#888' : '#2ea043')}">
+              ${isWork ? 'Linia 161 (5 kółek)' : 'WOLNE'}
+            </span>
+            ${isWork ? `
+              <button style="background: rgba(255,255,255,0.15); border:none; color:#fff; font-size:10px; padding:4px 6px; border-radius:6px; cursor:pointer; margin-top:4px; font-weight:600;" onclick="pokazWidok('kurs'); startJazda();">
+                ▶ Zacznij
+              </button>
+            ` : ''}
           </div>
         `;
       }
