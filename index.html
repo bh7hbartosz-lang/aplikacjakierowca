@@ -3,315 +3,298 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-  <title>Drobin Urbanow MPK - Telefon</title>
-
+  <title>Drobin Urbanow MPK - Mobile</title>
   <style>
+    :root {
+      --bg: #0b0e14;
+      --card-bg: #151b26;
+      --accent: #ff8c00;
+      --text: #f0f6fc;
+      --text-dim: #8b949e;
+      --border: #212936;
+      --green: #2ea043;
+      --red: #da3633;
+    }
     * { box-sizing: border-box; margin: 0; padding: 0; user-select: none; }
+    
     html, body {
-      width: 100vw;
-      height: 100dvh;
-      background-color: #0d1117;
-      color: #f0f6fc;
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-      overflow: hidden;
+      width: 100vw; height: 100dvh; background-color: var(--bg); color: var(--text);
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; overflow: hidden;
     }
 
-    #app {
-      display: flex;
-      width: 100vw;
-      height: 100dvh;
+    /* AUTOMATYCZNE DOPASOWANIE DO SYSTEMÓW */
+    .app-viewport {
+      display: flex; width: 100vw; height: 100dvh;
       padding-top: env(safe-area-inset-top, 0px);
-      padding-bottom: env(safe-area-inset-bottom, 5px);
-      padding-left: env(safe-area-inset-left, 5px);
-      padding-right: env(safe-area-inset-right, 5px);
+      padding-bottom: env(safe-area-inset-bottom, 0px);
+      padding-left: env(safe-area-inset-left, 0px);
+      padding-right: env(safe-area-inset-right, 0px);
     }
 
-    /* LOGOWANIE */
+    /* EKRAN LOGOWANIA */
     #login-screen {
-      position: fixed; inset: 0; background: #161b22; z-index: 1000;
-      display: flex; justify-content: center; align-items: center; padding: 10px;
+      position: fixed; inset: 0; background: var(--bg); z-index: 2000;
+      display: flex; justify-content: center; align-items: center; padding: 20px;
     }
     .login-card {
-      background: #21262d; padding: 20px; border-radius: 12px;
-      border: 1px solid #30363d; width: 280px; text-align: center;
+      background: var(--card-bg); border: 1px solid var(--border); border-radius: 16px;
+      padding: 25px; width: 320px; text-align: center; box-shadow: 0 10px 30px rgba(0,0,0,0.5);
     }
-    .login-card h2 { color: #f28c28; font-size: 18px; margin-bottom: 4px; }
-    .input-field {
-      width: 100%; padding: 10px; margin: 12px 0; background: #0d1117;
-      border: 1px solid #30363d; border-radius: 6px; color: #fff; font-size: 13px;
-    }
-
-    /* WIDOK MIESIĘCZNY GRAFIKU */
-    #month-screen {
-      position: fixed; inset: 0; background: #0d1117; z-index: 500;
-      display: flex; flex-direction: column; padding: 10px; overflow-y: auto;
-    }
-    .month-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
-    .calendar-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px; }
-    .day-card {
-      background: #161b22; border: 1px solid #30363d; border-radius: 6px;
-      padding: 6px; text-align: center; font-size: 11px; min-height: 55px;
-      display: flex; flex-direction: column; justify-content: space-between;
-    }
-    .day-card.active-day { border-color: #f28c28; background: #21262d; }
-    .day-badge { background: #f28c28; color: #000; font-weight: bold; border-radius: 3px; font-size: 9px; padding: 1px 2px; }
-
-    /* LEWY PANEL GRAFIKU */
-    .sidebar { width: 28%; background: #161b22; border-right: 1px solid #30363d; display: flex; flex-direction: column; padding: 6px; gap: 6px; }
-    .driver-info { padding: 6px; background: #21262d; border-radius: 6px; border-left: 3px solid #f28c28; }
-    .driver-info h3 { font-size: 11px; color: #fff; }
-
-    /* PRAWY PANEL JAZDY */
-    .main-content { width: 72%; display: flex; flex-direction: column; background: #0d1117; padding: 6px; gap: 6px; }
-    .top-bar { background: #161b22; padding: 4px 8px; display: flex; justify-content: space-between; border-radius: 6px; border: 1px solid #30363d; }
-    .timer-box { background: #21262d; border-radius: 6px; padding: 4px 8px; display: flex; justify-content: space-between; border: 1px solid #30363d; }
-    .stops-container { background: #161b22; border: 1px solid #30363d; border-radius: 6px; padding: 6px; flex: 1; overflow-y: auto; }
-    .stop-item { display: flex; justify-content: space-between; padding: 6px; background: #21262d; border-radius: 4px; margin-bottom: 4px; border-left: 3px solid #58a6ff; }
-    .stop-item.current { border-left-color: #f28c28; background: #2d333b; }
-    .stop-item.passed { border-left-color: #2ea043; opacity: 0.4; }
-
-    /* OKNO PRZERWY */
-    #break-overlay {
-      position: absolute; inset: 0; background: rgba(13, 17, 23, 0.95);
-      z-index: 800; display: none; flex-direction: column;
-      justify-content: center; align-items: center; text-align: center; padding: 20px;
+    .login-card h2 { color: var(--accent); font-size: 20px; margin-bottom: 5px; }
+    .input-field, .select-field {
+      width: 100%; padding: 12px; margin: 10px 0; background: var(--bg);
+      border: 1px solid var(--border); border-radius: 8px; color: #fff; font-size: 13px;
     }
 
-    .action-buttons { display: flex; gap: 6px; min-height: 38px; }
-    .btn { background: #f28c28; color: #000; border: none; padding: 8px; font-size: 12px; font-weight: bold; border-radius: 6px; cursor: pointer; }
-    .btn:disabled { background: #21262d; color: #555; }
+    /* NOCNY / NOWOCZESNY LAYOUT APLIKACJI */
+    #main-layout { display: none; width: 100vw; height: 100dvh; }
+
+    /* BOCZNE MENU NAWIGACJI */
+    .sidebar-menu {
+      width: 260px; background: var(--card-bg); border-right: 1px solid var(--border);
+      display: flex; flex-direction: column; justify-content: space-between; padding: 15px;
+    }
+    .nav-item {
+      padding: 12px; border-radius: 8px; color: var(--text-dim); font-weight: bold;
+      font-size: 13px; margin-bottom: 6px; cursor: pointer; display: flex; align-items: center; gap: 10px;
+    }
+    .nav-item.active { background: var(--accent); color: #000; }
+
+    /* GŁÓWNY PULPIT DASHBOARD */
+    .content-area { flex: 1; display: flex; flex-direction: column; padding: 15px; overflow-y: auto; gap: 15px; }
+
+    .welcome-card {
+      background: linear-gradient(135deg, #1f2937, #111827); border: 1px solid var(--border);
+      border-radius: 12px; padding: 15px; display: flex; justify-content: space-between; align-items: center;
+    }
+
+    /* DUŻY ROZCIĄGNIĘTY GRAFIK MIESIĘCZNY */
+    .calendar-container {
+      background: var(--card-bg); border: 1px solid var(--border); border-radius: 12px; padding: 15px; flex: 1;
+    }
+    .calendar-grid {
+      display: grid; grid-template-columns: repeat(7, 1fr); gap: 8px; margin-top: 10px;
+    }
+    .day-box {
+      background: var(--bg); border: 1px solid var(--border); border-radius: 8px;
+      padding: 8px; min-height: 65px; display: flex; flex-direction: column; justify-content: space-between; font-size: 11px;
+    }
+    .day-box.work { border-color: var(--accent); background: #1c170f; }
+    .day-box.free { border-color: var(--green); background: #0e1a12; }
+
+    /* EKRAN JAZDY TRASY */
+    #drive-screen { display: none; width: 100%; height: 100%; flex-direction: column; gap: 10px; }
+    .stops-scroll { flex: 1; background: var(--card-bg); border: 1px solid var(--border); border-radius: 10px; padding: 10px; overflow-y: auto; }
+    .stop-row { padding: 10px; background: var(--bg); border-radius: 6px; margin-bottom: 6px; border-left: 4px solid var(--border); display: flex; justify-content: space-between; }
+    .stop-row.active { border-left-color: var(--accent); background: #1f1a10; }
+
+    /* PRZYCISKI AKCJI */
+    .btn { background: var(--accent); color: #000; border: none; padding: 12px; font-weight: bold; border-radius: 8px; cursor: pointer; text-align: center; }
+    .btn-secondary { background: var(--border); color: #fff; }
+    .btn-red { background: var(--red); color: #fff; }
   </style>
 </head>
 <body>
 
-  <!-- EKRAN LOGOWANIA -->
+  <!-- OKNO LOGOWANIA -->
   <div id="login-screen">
     <div class="login-card">
-      <h2>Drobin Urbanow MPK</h2>
-      <p style="font-size: 11px; color: #8b949e;">Aplikacja Kierowcy</p>
-      <input type="text" id="driver-login" class="input-field" placeholder="Podaj swój login...">
-      <button class="btn" style="width: 100%" onclick="zaloguj()">Zaloguj do Służby</button>
+      <h2>Drobin MPK</h2>
+      <p style="font-size: 11px; color: var(--text-dim);">Portal Kierowcy v2.0</p>
+      
+      <input type="text" id="l-user" class="input-field" placeholder="Login kierowcy...">
+      
+      <label style="font-size: 11px; color: var(--text-dim); text-align: left; display: block;">Twój Urządzenie / System:</label>
+      <select id="l-system" class="select-field">
+        <option value="android">📱 Android</option>
+        <option value="ios">🍎 iPhone (iOS)</option>
+        <option value="pc">💻 Komputer PC</option>
+      </select>
+
+      <button class="btn" style="width: 100%; margin-top: 10px;" onclick="zaloguj()">Zaloguj i Włącz Powiadomienia</button>
     </div>
   </div>
 
-  <!-- WIDOK MIESIĘCZNEGO GRAFIKU -->
-  <div id="month-screen" style="display: none;">
-    <div class="month-header">
+  <!-- APLIKACJA GŁÓWNA Z MENU -->
+  <div id="main-layout" class="app-viewport">
+    <!-- MENUBAR PO BOKU -->
+    <div class="sidebar-menu">
       <div>
-        <h2 style="color: #f28c28; font-size: 16px;" id="month-driver-name">Kierowca</h2>
-        <p style="font-size: 11px; color: #8b949e;">Grafik na Sierpień 2026</p>
+        <h3 style="color: var(--accent); font-size: 16px; margin-bottom: 20px;">MPK Mobile</h3>
+        <div class="nav-item active" onclick="pokazWidok('dashboard')">📅 Miesięczny Grafik</div>
+        <div class="nav-item" onclick="pokazWidok('dzis')">🚍 Dzisiejszy Kurs</div>
       </div>
-      <button class="btn" style="background: #21262d; color: #fff;" onclick="wyloguj()">Wyloguj</button>
-    </div>
-    <div class="calendar-grid" id="calendar-grid"></div>
-  </div>
 
-  <!-- NAKŁADKA PRZERWY -->
-  <div id="break-overlay">
-    <h2 style="color: #f28c28; font-size: 20px; margin-bottom: 10px;">☕ CZAS NA PRZERWĘ!</h2>
-    <p style="color: #8b949e; font-size: 13px; margin-bottom: 20px;">Wykonano wymaganą część kółek. Zostań tutaj lub wróć do grafiku.</p>
-    <div style="display: flex; gap: 10px;">
-      <button class="btn" onclick="kontynuujPoPrzerwie()">Wznowię kurs</button>
-      <button class="btn" style="background: #21262d; color: #fff;" onclick="wrocDoMiesiaca()">Wróć do grafiku</button>
-    </div>
-  </div>
-
-  <!-- EKRAN JAZDY -->
-  <div id="app" style="display: none;">
-    <div class="sidebar">
-      <div class="driver-info">
-        <h3 id="disp-driver-id">Kierowca</h3>
-        <p id="disp-status" style="font-size: 9px; color: #8b949e;">Status: Gotowy</p>
+      <div>
+        <button class="btn btn-secondary" style="width: 100%; margin-bottom: 8px; font-size: 11px;" onclick="otworzZgloszenie()">PROŚBA / ZMIANA</button>
+        <button class="btn btn-red" style="width: 100%; font-size: 11px;" onclick="wyloguj()">Wyloguj</button>
       </div>
-      <button class="btn" style="background: #21262d; color: #fff; font-size: 10px;" onclick="wrocDoMiesiaca()">⬅ Widok Grafiku</button>
     </div>
 
-    <div class="main-content">
-      <div class="top-bar">
-        <div>
-          <span style="color: #8b949e; font-size: 10px;">LINIA:</span>
-          <strong id="active-line-name" style="color: #f28c28; font-size: 12px;">-</strong>
+    <!-- PRAWY OBSZAR APLIKACJI -->
+    <div class="content-area">
+      
+      <!-- POWITANIE & KALENDARZ -->
+      <div id="view-dashboard" style="display: flex; flex-direction: column; gap: 15px; height: 100%;">
+        <div class="welcome-card">
+          <div>
+            <h2 id="w-name" style="font-size: 18px;">Witaj, Kierowco!</h2>
+            <p id="w-date" style="font-size: 12px; color: var(--text-dim);">Dzisiaj jest: --.--.2026 | Godzina: --:--</p>
+          </div>
+          <button class="btn" onclick="pokazWidok('dzis')">Rozpocznij Dzisiejszy Kurs ➔</button>
         </div>
-        <div style="font-family: monospace; color: #2ea043; font-weight: bold;" id="live-clock">00:00:00</div>
-      </div>
 
-      <div class="timer-box">
-        <div>
-          <span style="font-size: 9px; color: #8b949e; display: block;">POSTĘP KÓŁEK:</span>
-          <strong id="lap-counter" style="font-size: 12px; color: #58a6ff;">0 / 0</strong>
-        </div>
-        <div style="text-align: right;">
-          <span style="font-size: 9px; color: #8b949e; display: block;">DO PRZYSTANKU:</span>
-          <strong id="stop-timer" style="font-size: 15px; color: #2ea043;">00:00</strong>
+        <div class="calendar-container">
+          <div style="display: flex; justify-content: space-between; align-items: center;">
+            <h3 style="font-size: 14px; color: var(--accent);">Twój Rozszerzony Grafik na Sierpień 2026</h3>
+            <span style="font-size: 10px; color: var(--text-dim);">🟡 Służba | 🟢 Wolne</span>
+          </div>
+          <div class="calendar-grid" id="cal-grid"></div>
         </div>
       </div>
 
-      <div class="stops-container" id="stops-list"></div>
+      <!-- EKRAN JAZDY -->
+      <div id="view-drive" style="display: none; height: 100%; flex-direction: column; gap: 10px;">
+        <div class="welcome-card" style="padding: 10px;">
+          <div>
+            <span style="font-size: 10px; color: var(--text-dim);">AKTYWNA LINIA:</span>
+            <h3 id="d-line" style="color: var(--accent);">Linia --</h3>
+          </div>
+          <div style="text-align: right;">
+            <span style="font-size: 10px; color: var(--text-dim);">CZAS DO PRZYSTANKU:</span>
+            <h2 id="d-timer" style="color: var(--green); font-family: monospace;">00:00</h2>
+          </div>
+        </div>
 
-      <div class="action-buttons">
-        <button id="btn-start" class="btn" style="flex: 1;" onclick="startKurs()">ZACZNIJ KURS</button>
-        <button id="btn-next-stop" class="btn" style="flex: 1.2; background: #21262d; color: #fff;" onclick="zaliczPrzystanek()" disabled>NASTĘPNY PRZYSTANEK ✓</button>
+        <div class="stops-scroll" id="d-stops"></div>
+
+        <!-- PRZYCISKI PROŚBY I DODATKOWEGO KURSU -->
+        <div style="display: flex; gap: 8px;">
+          <button class="btn btn-secondary" style="flex: 1; font-size: 11px;" onclick="prosbaOZmiane()">⚠️ Prośba o Zmianę / Wolne</button>
+          <button class="btn btn-secondary" style="flex: 1; font-size: 11px;" onclick="dodatkowyKurs()">➕ Prośba o Dodatkowy Kurs</button>
+        </div>
+
+        <div style="display: flex; gap: 10px;">
+          <button id="btn-start" class="btn" style="flex: 1;" onclick="startJazda()">ZACZNIJ KURS</button>
+          <button id="btn-next" class="btn btn-secondary" style="flex: 1;" onclick="nastPrzystanek()" disabled>NASTĘPNY PRZYSTANEK ✓</button>
+        </div>
       </div>
+
     </div>
   </div>
 
   <script>
-    let aktualnyKierowca = null;
-    let wybraneKonto = null;
-    let dzisiejszyGrafik = null;
-    let aktywneKolko = 1;
-    let aktualnyPrzystanekIndex = 0;
-    let timerInterval = null;
-    let pozostalyCzas = 0;
+    let uzytkownik = null;
+    let aktywneKonto = null;
+    let dzisiejszaSluzba = null;
+    let indexPrzystanku = 0;
+    let timerInt = null;
+    let czasSek = 0;
 
+    // Aktualizacja zegara na żywo
     setInterval(() => {
-      document.getElementById('live-clock').innerText = new Date().toLocaleTimeString();
+      const now = new Date();
+      document.getElementById('w-date').innerText = `Dzisiaj: ${now.toLocaleDateString()} | Godzina: ${now.toLocaleTimeString()}`;
     }, 1000);
 
     function zaloguj() {
-      const login = document.getElementById('driver-login').value.trim().toLowerCase();
-      const db = JSON.parse(localStorage.getItem('mpk_db')) || { kierowcy: {}, grafiki: {} };
+      const login = document.getElementById('l-user').value.trim().toLowerCase();
+      const sys = document.getElementById('l-system').value;
+      const db = JSON.parse(localStorage.getItem('mpk_db_v2')) || { kierowcy: {} };
 
-      if (!db.kierowcy[login]) return alert('Nie znaleziono takiego kierowcy! Poproś dyspozytora o założenie konta.');
+      if(!db.kierowcy[login]) return alert('Brak konta! Poproś dyspozytora w panel.html o jego utworzenie.');
 
-      aktualnyKierowca = db.kierowcy[login];
-      wybraneKonto = login;
+      uzytkownik = db.kierowcy[login];
+      aktywneKonto = login;
+
+      // Obsługa powiadomień w przeglądarce
+      if ("Notification" in window) {
+        Notification.requestPermission();
+      }
 
       document.getElementById('login-screen').style.display = 'none';
-      pokazMiesiac();
+      document.getElementById('main-layout').style.display = 'flex';
+      document.getElementById('w-name').innerText = `Witaj, ${uzytkownik.nazwa}!`;
+
+      generujKalendarz();
     }
 
     function wyloguj() {
-      document.getElementById('month-screen').style.display = 'none';
+      document.getElementById('main-layout').style.display = 'none';
       document.getElementById('login-screen').style.display = 'flex';
     }
 
-    function pokazMiesiac() {
-      document.getElementById('month-screen').style.display = 'flex';
-      document.getElementById('app').style.display = 'none';
-      document.getElementById('month-driver-name').innerText = aktualnyKierowca.nazwa;
+    function pokazWidok(v) {
+      document.getElementById('view-dashboard').style.display = v === 'dashboard' ? 'flex' : 'none';
+      document.getElementById('view-drive').style.display = v === 'dzis' ? 'flex' : 'none';
+      if(v === 'dzis') zaladujDzisiejszyKurs();
+    }
 
-      const db = JSON.parse(localStorage.getItem('mpk_db')) || { grafiki: {} };
-      const grafikiKierowcy = (db.grafiki[wybraneKonto]) ? db.grafiki[wybraneKonto] : {};
-
-      const grid = document.getElementById('calendar-grid');
+    function generujKalendarz() {
+      const db = JSON.parse(localStorage.getItem('mpk_db_v2'));
+      const grafiki = (db.grafiki && db.grafiki[aktywneKonto]) ? db.grafiki[aktywneKonto] : {};
+      const grid = document.getElementById('cal-grid');
       grid.innerHTML = '';
 
-      for (let i = 1; i <= 31; i++) {
-        const d = grafikiKierowcy[i];
-        let content = d ? `<span class="day-badge">L. ${d.linia}</span><div style="font-size: 8px; color: #8b949e;">${d.kolek} kółka</div>` : '<span style="color: #444;">-</span>';
-        let btn = d ? `<button class="btn" style="padding: 2px; font-size: 8px; margin-top: 2px;" onclick="rozpocznijDzien(${i})">START</button>` : '';
-
+      for(let i=1; i<=31; i++) {
+        const g = grafiki[i];
         grid.innerHTML += `
-          <div class="day-card ${d ? 'active-day' : ''}">
-            <strong>${i}</strong>
-            ${content}
-            ${btn}
+          <div class="day-box ${g ? 'work' : 'free'}">
+            <strong>Dzień ${i}</strong>
+            <span style="font-size: 9px; font-weight: bold; margin-top: 4px;">${g ? 'Linia ' + g.linia : 'WOLNE'}</span>
+            <span style="font-size: 8px; color: var(--text-dim);">${g ? g.kolek + ' kółka' : 'Odpoczynek'}</span>
           </div>
         `;
       }
     }
 
-    function rozpocznijDzien(dzien) {
-      const db = JSON.parse(localStorage.getItem('mpk_db'));
-      dzisiejszyGrafik = db.grafiki[wybraneKonto][dzien];
+    function zaladujDzisiejszyKurs() {
+      const db = JSON.parse(localStorage.getItem('mpk_db_v2'));
+      const dzisDzien = new Date().getDate(); // Pobiera dzisiejszy dzień
+      dzisiejszaSluzba = (db.grafiki && db.grafiki[aktywneKonto]) ? db.grafiki[aktywneKonto][dzisDzien] : null;
 
-      document.getElementById('month-screen').style.display = 'none';
-      document.getElementById('app').style.display = 'flex';
-      document.getElementById('disp-driver-id').innerText = aktualnyKierowca.nazwa;
-      document.getElementById('active-line-name').innerText = `Linia ${dzisiejszyGrafik.linia}`;
-      document.getElementById('lap-counter').innerText = `1 / ${dzisiejszyGrafik.kolek}`;
-
-      aktywneKolko = 1;
-      aktualnyPrzystanekIndex = 0;
-      wyswietlPrzystanki();
-    }
-
-    function wyswietlPrzystanki() {
-      const container = document.getElementById('stops-list');
+      const container = document.getElementById('d-stops');
       container.innerHTML = '';
-      dzisiejszyGrafik.przystanki.forEach((p, index) => {
-        let statusClass = '';
-        if (index < aktualnyPrzystanekIndex) statusClass = 'passed';
-        if (index === aktualnyPrzystanekIndex) statusClass = 'current';
 
+      if(!dzisiejszaSluzba) {
+        document.getElementById('d-line').innerText = 'Brak służby na dziś';
+        container.innerHTML = '<div style="text-align: center; color: var(--text-dim); margin-top: 20px;">Masz dzisiaj wolne! Masz czas na odpoczynek.</div>';
+        document.getElementById('btn-start').disabled = true;
+        return;
+      }
+
+      const liniaInfo = db.linie[dzisiejszaSluzba.linia];
+      document.getElementById('d-line').innerText = `Linia ${liniaInfo.numer} (${liniaInfo.relacja})`;
+      document.getElementById('btn-start').disabled = false;
+
+      liniaInfo.przystanki.forEach((p, idx) => {
         container.innerHTML += `
-          <div class="stop-item ${statusClass}">
-            <div>
-              <strong style="font-size: 11px;">${index + 1}. ${p.nazwa}</strong>
-              <div style="font-size: 9px; color: #8b949e;">Czas: ${p.czas_sek}s</div>
-            </div>
-            <div style="font-size: 10px; font-weight: bold;">
-              ${index === aktualnyPrzystanekIndex ? '⬅ OBECNY' : ''}
-            </div>
+          <div class="stop-row ${idx === 0 ? 'active' : ''}">
+            <span><strong>${idx+1}. ${p.nazwa}</strong></span>
+            <span style="font-size: 11px; color: var(--text-dim);">${p.czas_sek}s</span>
           </div>
         `;
       });
     }
 
-    function startKurs() {
-      document.getElementById('btn-start').disabled = true;
-      document.getElementById('btn-next-stop').disabled = false;
-      startTimerForStop();
-    }
-
-    function startTimerForStop() {
-      clearInterval(timerInterval);
-      const nastepnyIndex = aktualnyPrzystanekIndex + 1;
-      pozostalyCzas = nastepnyIndex < dzisiejszyGrafik.przystanki.length ? dzisiejszyGrafik.przystanki[nastepnyIndex].czas_sek : 0;
-
-      updateTimerDisplay();
-      timerInterval = setInterval(() => {
-        if (pozostalyCzas > 0) {
-          pozostalyCzas--;
-          updateTimerDisplay();
-        } else {
-          clearInterval(timerInterval);
-        }
-      }, 1000);
-    }
-
-    function updateTimerDisplay() {
-      const min = Math.floor(pozostalyCzas / 60);
-      const sec = pozostalyCzas % 60;
-      document.getElementById('stop-timer').innerText = `${min.toString().padStart(2, '0')}:${sec.toString().padStart(2, '0')}`;
-    }
-
-    function zaliczPrzystanek() {
-      if (aktualnyPrzystanekIndex < dzisiejszyGrafik.przystanki.length - 1) {
-        aktualnyPrzystanekIndex++;
-        wyswietlPrzystanki();
-        startTimerForStop();
-      } else {
-        clearInterval(timerInterval);
-        if (aktywneKolko === dzisiejszyGrafik.przerwaPoKolku) {
-          document.getElementById('break-overlay').style.display = 'flex';
-        } else if (aktywneKolko < dzisiejszyGrafik.kolek) {
-          przejdzDoNastepnegoKolka();
-        } else {
-          alert('Cały grafik na dziś zrealizowany!');
-          wrocDoMiesiaca();
-        }
+    function wyslijPowiadomienie(tytul, tresc) {
+      if ("Notification" in window && Notification.permission === "granted") {
+        new Notification(tytul, { body: tresc });
       }
     }
 
-    function kontynuujPoPrzerwie() {
-      document.getElementById('break-overlay').style.display = 'none';
-      przejdzDoNastepnegoKolka();
+    function startJazda() {
+      document.getElementById('btn-start').disabled = true;
+      document.getElementById('btn-next').disabled = false;
+      wyslijPowiadomienie("MPK Drobin", "Rozpoczęto kurs! Szerokiej drogi.");
     }
 
-    function przejdzDoNastepnegoKolka() {
-      aktywneKolko++;
-      aktualnyPrzystanekIndex = 0;
-      document.getElementById('lap-counter').innerText = `${aktywneKolko} / ${dzisiejszyGrafik.kolek}`;
-      wyswietlPrzystanki();
-      startTimerForStop();
+    function prosbaOZmiane() {
+      alert("Wysłano prośbę do dyspozytora o zmianę linii / udzielenie wolnego.");
     }
 
-    function wrocDoMiesiaca() {
-      document.getElementById('break-overlay').style.display = 'none';
-      document.getElementById('app').style.display = 'none';
-      pokazMiesiac();
+    function dodatkowyKurs() {
+      alert("Zgłoszono chęć wzięcia dodatkowego kursu! Dyspozytor przydzieli go w panelu.");
     }
   </script>
 </body>
