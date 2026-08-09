@@ -10,12 +10,12 @@
   
   <style>
     :root {
-      --bg-dark: #080103;
-      --border: #2d0d13;
+      --bg-dark: #050505;
+      --border: #1f0b0e;
       --accent-red: #5c1218;
       --accent-red-hover: #7d1820;
       --text-white: #ffffff;
-      --text-dim: #a3888d;
+      --text-dim: #8c8284;
       --orange-accent: #ff8c00;
       --green-accent: #2ea043;
     }
@@ -36,75 +36,81 @@
       padding-bottom: env(safe-area-inset-bottom, 0px);
     }
 
-    /* EKRAN LOGOWANIA - LIQUID GLASS & CENTERED */
+    /* EKRAN LOGOWANIA Z BORDOWYMI POŚWIATAMI */
     #login-screen {
       position: fixed; inset: 0;
-      background: radial-gradient(circle at 50% 50%, #4a0911 0%, #210307 50%, #080102 100%);
+      background: #000000;
       z-index: 2000;
       display: flex; justify-content: center; align-items: center;
       padding: 20px;
       overflow: hidden;
     }
 
+    /* POŚWIATA W PRAWO-GÓRNYM ROGU */
     #login-screen::before {
       content: '';
-      position: absolute; width: 380px; height: 380px;
-      background: radial-gradient(circle, rgba(125,24,32,0.65) 0%, rgba(0,0,0,0) 70%);
-      top: 15%; left: 25%; filter: blur(60px); animation: floatGlow 8s infinite alternate ease-in-out;
+      position: absolute; width: 600px; height: 600px;
+      background: radial-gradient(circle, rgba(140, 20, 30, 0.55) 0%, rgba(92, 18, 24, 0.2) 40%, rgba(0,0,0,0) 70%);
+      top: -15%; right: -10%;
+      filter: blur(50px);
+      pointer-events: none;
     }
 
-    @keyframes floatGlow {
-      0% { transform: translate(0, 0) scale(1); }
-      100% { transform: translate(50px, 35px) scale(1.25); }
+    /* POŚWIATA W LEWO-DOLNYM ROGU */
+    #login-screen::after {
+      content: '';
+      position: absolute; width: 650px; height: 650px;
+      background: radial-gradient(circle, rgba(140, 20, 30, 0.5) 0%, rgba(92, 18, 24, 0.18) 40%, rgba(0,0,0,0) 70%);
+      bottom: -20%; left: -12%;
+      filter: blur(55px);
+      pointer-events: none;
     }
 
     /* KARTA LOGOWANIA - GLASSMORPHISM */
     .login-container {
       position: relative;
       width: 100%; max-width: 380px;
-      background: rgba(25, 4, 8, 0.5);
+      background: rgba(15, 15, 15, 0.65);
       backdrop-filter: blur(25px) saturate(180%);
       -webkit-backdrop-filter: blur(25px) saturate(180%);
-      border: 1px solid rgba(255, 255, 255, 0.12);
-      border-top: 1px solid rgba(255, 255, 255, 0.25);
-      border-left: 1px solid rgba(255, 255, 255, 0.2);
-      border-radius: 32px; padding: 36px 28px;
-      box-shadow: 0 30px 60px rgba(0, 0, 0, 0.8), 
-                  inset 0 1px 0 rgba(255, 255, 255, 0.2),
-                  0 0 45px rgba(92, 18, 24, 0.4);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-top: 1px solid rgba(255, 255, 255, 0.15);
+      border-radius: 28px; padding: 36px 28px;
+      box-shadow: 0 25px 50px rgba(0, 0, 0, 0.9), 
+                  0 0 30px rgba(92, 18, 24, 0.15);
       text-align: center;
     }
 
-    /* WEKTOROWE LOGO MPK DROBIN BEZ TŁA */
+    /* LOGO MPK DROBIN BEZ TŁA */
     .brand-header { 
       margin-bottom: 24px; 
       display: flex; flex-direction: column; align-items: center; 
     }
     
     .brand-logo-svg {
-      width: 240px; height: auto;
-      display: block; margin-bottom: 10px;
-      filter: drop-shadow(0 6px 12px rgba(0,0,0,0.7));
+      width: 230px; height: auto;
+      display: block; margin-bottom: 8px;
+      filter: drop-shadow(0 4px 10px rgba(0,0,0,0.8));
     }
 
     .brand-title { 
       font-size: 15px; font-weight: 700; color: #ffffff;
-      opacity: 0.95; letter-spacing: -0.2px;
+      opacity: 0.9; letter-spacing: -0.2px;
     }
 
-    /* FORMULARZ Z BORDOWYMI AKCENTAMI */
+    /* FORMULARZ */
     .form-group { margin-bottom: 18px; text-align: left; }
     .form-group label { 
-      display: block; font-size: 14px; font-weight: 700; color: #ffffff; margin-bottom: 8px; margin-left: 4px;
+      display: block; font-size: 13px; font-weight: 700; color: #e0e0e0; margin-bottom: 8px; margin-left: 4px;
     }
 
     .input-pill {
       width: 100%; height: 48px; 
       background: rgba(255, 255, 255, 0.95); 
-      border: 1px solid rgba(255, 255, 255, 0.5); 
+      border: 1px solid rgba(255, 255, 255, 0.2); 
       border-radius: 24px;
       padding: 0 20px; font-size: 15px; font-weight: 600; color: #000; outline: none;
-      box-shadow: 0 8px 20px rgba(0,0,0,0.25); 
+      box-shadow: 0 4px 12px rgba(0,0,0,0.3); 
       transition: all 0.25s ease;
       font-family: 'Plus Jakarta Sans', sans-serif;
     }
@@ -112,7 +118,7 @@
     .input-pill:focus { 
       transform: translateY(-2px); 
       background: #ffffff;
-      box-shadow: 0 10px 25px rgba(255,255,255,0.3), 0 0 15px rgba(125, 24, 32, 0.5); 
+      box-shadow: 0 6px 18px rgba(255,255,255,0.2), 0 0 12px rgba(92, 18, 24, 0.4); 
     }
 
     select.input-pill {
@@ -124,53 +130,53 @@
 
     .btn-login {
       width: 100%; height: 50px; 
-      background: linear-gradient(135deg, #7d1820 0%, #4a0911 100%);
-      border: 1px solid rgba(255, 255, 255, 0.25); 
+      background: linear-gradient(135deg, #6b141c 0%, #420a0f 100%);
+      border: 1px solid rgba(255, 255, 255, 0.15); 
       border-radius: 25px; color: #ffffff;
-      font-size: 16px; font-weight: 800; cursor: pointer; margin-top: 10px;
-      box-shadow: 0 10px 25px rgba(74, 9, 17, 0.6), inset 0 1px 0 rgba(255,255,255,0.3); 
+      font-size: 15px; font-weight: 800; cursor: pointer; margin-top: 10px;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.5); 
       transition: all 0.25s ease;
       font-family: 'Plus Jakarta Sans', sans-serif;
     }
     .btn-login:hover { 
-      background: linear-gradient(135deg, #991e28 0%, #5e0d16 100%); 
+      background: linear-gradient(135deg, #821922 0%, #520d13 100%); 
       transform: translateY(-2px); 
-      box-shadow: 0 14px 30px rgba(125, 24, 32, 0.7);
+      box-shadow: 0 10px 25px rgba(92, 18, 24, 0.5);
     }
     .btn-login:active { transform: translateY(1px); }
 
     /* LAYOUT APLIKACJI PO ZALOGOWANIU */
-    #main-layout { display: none; width: 100vw; height: 100dvh; background: #0b0204; }
-    .sidebar-menu { width: 260px; background: #120407; border-right: 1px solid var(--border); display: flex; flex-direction: column; justify-content: space-between; padding: 20px; }
+    #main-layout { display: none; width: 100vw; height: 100dvh; background: #050505; }
+    .sidebar-menu { width: 260px; background: #0d0d0d; border-right: 1px solid #1a1a1a; display: flex; flex-direction: column; justify-content: space-between; padding: 20px; }
     .nav-item { padding: 14px 16px; border-radius: 12px; color: var(--text-dim); font-weight: 700; font-size: 14px; margin-bottom: 8px; cursor: pointer; transition: 0.2s; }
     .nav-item.active { background: var(--orange-accent); color: #000; }
     .content-area { flex: 1; display: flex; flex-direction: column; padding: 20px; overflow-y: auto; gap: 20px; }
 
-    .welcome-card { background: linear-gradient(135deg, #24080e, #120407); border: 1px solid var(--border); border-radius: 16px; padding: 20px; display: flex; justify-content: space-between; align-items: center; }
-    .calendar-container { background: #120407; border: 1px solid var(--border); border-radius: 16px; padding: 20px; flex: 1; }
+    .welcome-card { background: linear-gradient(135deg, #141414, #0a0a0a); border: 1px solid #222; border-radius: 16px; padding: 20px; display: flex; justify-content: space-between; align-items: center; }
+    .calendar-container { background: #0d0d0d; border: 1px solid #1a1a1a; border-radius: 16px; padding: 20px; flex: 1; }
     .calendar-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 10px; margin-top: 15px; }
-    .day-box { background: #080203; border: 1px solid var(--border); border-radius: 10px; padding: 10px; min-height: 70px; display: flex; flex-direction: column; justify-content: space-between; font-size: 12px; }
-    .day-box.work { border-color: var(--orange-accent); background: #1a0f05; }
-    .day-box.free { border-color: var(--green-accent); background: #051409; }
+    .day-box { background: #050505; border: 1px solid #1c1c1c; border-radius: 10px; padding: 10px; min-height: 70px; display: flex; flex-direction: column; justify-content: space-between; font-size: 12px; }
+    .day-box.work { border-color: var(--orange-accent); background: #140c04; }
+    .day-box.free { border-color: var(--green-accent); background: #041207; }
 
-    .stops-scroll { flex: 1; background: #120407; border: 1px solid var(--border); border-radius: 12px; padding: 15px; overflow-y: auto; }
-    .stop-row { padding: 14px; background: #080203; border-radius: 10px; margin-bottom: 8px; border-left: 5px solid var(--border); display: flex; justify-content: space-between; }
-    .stop-row.active { border-left-color: var(--orange-accent); background: #1c1107; }
+    .stops-scroll { flex: 1; background: #0d0d0d; border: 1px solid #1a1a1a; border-radius: 12px; padding: 15px; overflow-y: auto; }
+    .stop-row { padding: 14px; background: #050505; border-radius: 10px; margin-bottom: 8px; border-left: 5px solid #222; display: flex; justify-content: space-between; }
+    .stop-row.active { border-left-color: var(--orange-accent); background: #140c04; }
     .stop-row.passed { border-left-color: var(--green-accent); opacity: 0.4; }
 
     .btn { background: var(--orange-accent); color: #000; border: none; padding: 14px; font-weight: 800; border-radius: 12px; cursor: pointer; text-align: center; }
     .btn:disabled { opacity: 0.3; cursor: not-allowed; }
-    .btn-secondary { background: var(--border); color: #fff; }
+    .btn-secondary { background: #1a1a1a; color: #fff; }
     .btn-red { background: var(--accent-red); color: #fff; }
   </style>
 </head>
 <body>
 
-  <!-- EKRAN LOGOWANIA - LIQUID GLASS CENTERED -->
+  <!-- EKRAN LOGOWANIA -->
   <div id="login-screen">
     <div class="login-container">
       <div class="brand-header">
-        <!-- WEKTOROWE MPK DROBIN BEZ TŁA -->
+        <!-- LOGO MPK DROBIN -->
         <svg class="brand-logo-svg" viewBox="0 0 500 220" xmlns="http://www.w3.org/2000/svg">
           <defs>
             <linearGradient id="maroonGrad" x1="0%" y1="0%" x2="100%" y2="100%">
@@ -179,19 +185,15 @@
               <stop offset="100%" stop-color="#3b0a0e"/>
             </linearGradient>
             <filter id="shadow3d" x="-10%" y="-10%" width="130%" height="130%">
-              <feDropShadow dx="3" dy="5" stdDeviation="3" flood-color="#000000" flood-opacity="0.8"/>
+              <feDropShadow dx="3" dy="5" stdDeviation="3" flood-color="#000000" flood-opacity="0.9"/>
             </filter>
           </defs>
-          <g filter="url(#shadow3d)" fill="url(#maroonGrad)" stroke="#2b070a" stroke-width="2">
-            <!-- M -->
+          <g filter="url(#shadow3d)" fill="url(#maroonGrad)" stroke="#1a0406" stroke-width="2">
             <path d="M 20 20 L 70 20 L 120 110 L 170 20 L 220 20 L 220 150 L 175 150 L 175 65 L 132 145 L 108 145 L 65 65 L 65 150 L 20 150 Z" />
-            <!-- P -->
             <path d="M 228 20 L 310 20 C 350 20 360 45 360 70 C 360 98 345 120 310 120 L 273 120 L 273 150 L 228 150 Z M 273 55 L 273 85 L 302 85 C 315 85 320 78 320 70 C 320 62 315 55 302 55 Z" />
-            <!-- K -->
             <path d="M 368 20 L 413 20 L 413 70 L 452 20 L 500 20 L 448 80 L 500 150 L 452 150 L 413 95 L 413 150 L 368 150 Z" />
           </g>
-          <!-- DROBIN -->
-          <text x="260" y="195" font-family="'Plus Jakarta Sans', sans-serif" font-weight="900" font-size="34" fill="url(#maroonGrad)" stroke="#2b070a" stroke-width="1" letter-spacing="12" text-anchor="middle" filter="url(#shadow3d)">DROBIN</text>
+          <text x="260" y="195" font-family="'Plus Jakarta Sans', sans-serif" font-weight="900" font-size="34" fill="url(#maroonGrad)" stroke="#1a0406" stroke-width="1" letter-spacing="12" text-anchor="middle" filter="url(#shadow3d)">DROBIN</text>
         </svg>
         <div class="brand-title">Aplikacja dla kierowcy</div>
       </div>
