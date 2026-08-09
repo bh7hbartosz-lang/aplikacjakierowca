@@ -3,13 +3,12 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Panel Dyspozytora - Drobin Urbanow MPK</title>
+  <title>Panel Dyspozytora - MPK</title>
   <style>
     :root {
       --bg: #0b0e14;
       --card-bg: #151b26;
       --accent: #ff8c00;
-      --accent-hover: #e07b00;
       --text: #f0f6fc;
       --text-dim: #8b949e;
       --border: #212936;
@@ -19,196 +18,115 @@
     body { background: var(--bg); color: var(--text); padding: 25px; }
 
     header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; padding-bottom: 15px; border-bottom: 1px solid var(--border); }
-    header h1 { color: var(--accent); font-size: 24px; display: flex; align-items: center; gap: 10px; }
+    header h1 { color: var(--accent); font-size: 24px; }
 
-    .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); gap: 20px; }
-    .card { background: var(--card-bg); border: 1px solid var(--border); border-radius: 12px; padding: 20px; box-shadow: 0 4px 20px rgba(0,0,0,0.3); }
+    .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 20px; }
+    .card { background: var(--card-bg); border: 1px solid var(--border); border-radius: 12px; padding: 20px; }
     .card h2 { color: var(--accent); font-size: 16px; margin-bottom: 15px; border-bottom: 1px solid var(--border); padding-bottom: 8px; }
 
     label { display: block; font-size: 12px; color: var(--text-dim); margin: 12px 0 4px 0; font-weight: bold; }
-    input, select, textarea {
-      width: 100%; padding: 10px; background: var(--bg); border: 1px solid var(--border); border-radius: 6px; color: #fff; font-size: 13px;
-    }
-    input:focus, select:focus { border-color: var(--accent); outline: none; }
+    input, select { width: 100%; padding: 10px; background: var(--bg); border: 1px solid var(--border); border-radius: 6px; color: #fff; font-size: 13px; }
 
-    .btn { background: var(--accent); color: #000; border: none; padding: 12px; font-weight: bold; border-radius: 6px; cursor: pointer; width: 100%; margin-top: 15px; transition: 0.2s; }
-    .btn:hover { background: var(--accent-hover); }
-    .btn-green { background: var(--green); color: #fff; }
+    .btn { background: var(--accent); color: #000; border: none; padding: 12px; font-weight: bold; border-radius: 6px; cursor: pointer; width: 100%; margin-top: 15px; }
 
-    .stop-row { display: flex; gap: 8px; margin-bottom: 8px; align-items: center; }
-    .stop-row input { margin: 0; }
-    
-    .driver-badge { background: var(--bg); border: 1px solid var(--border); padding: 8px; border-radius: 6px; margin-bottom: 6px; font-size: 12px; border-left: 3px solid var(--accent); display: flex; justify-content: space-between; }
+    .notif-box { background: var(--bg); border: 1px solid var(--border); padding: 10px; border-radius: 6px; margin-bottom: 8px; font-size: 12px; border-left: 3px solid var(--accent); }
   </style>
 </head>
 <body>
 
   <header>
-    <h1>🚍 Centrala Dyspozytorska MPK</h1>
-    <span style="font-size: 12px; color: var(--text-dim);">System Zarządzania Torem i Grafikiem v2.0</span>
+    <h1>Centrala Dyspozytorska MPK</h1>
+    <span style="font-size: 12px; color: var(--text-dim);">System Zarządzania v2.0</span>
   </header>
 
   <div class="grid">
-    <!-- KARTA 1: DODAWANIE KIEROWCÓW -->
+    <!-- SEKCJA POWIADOMIEŃ OD KIEROWCÓW -->
+    <div class="card" style="grid-column: span 2;">
+      <h2>🔔 Powiadomienia / Prośby od Kierowców</h2>
+      <button class="btn" style="margin-top: 0; margin-bottom: 10px; width: auto; padding: 6px 12px; font-size: 11px;" onclick="odswiezZgloszenia()">Odśwież Powiadomienia</button>
+      <div id="lista-zgloszen"><div style="color: var(--text-dim); font-size: 12px;">Brak nowych zgłoszeń.</div></div>
+    </div>
+
+    <!-- DODAWANIE KIEROWCY -->
     <div class="card">
-      <h2>1. Konto Kierowcy</h2>
-      <label>Imię i Nazwisko / Nick:</label>
+      <h2>1. Dodaj Kierowcę</h2>
+      <label>Imię i Nazwisko:</label>
       <input type="text" id="k-name" placeholder="np. Jan Kowalski">
-      <label>Login do aplikacji:</label>
+      <label>Login:</label>
       <input type="text" id="k-login" placeholder="np. kowalski102">
-      <button class="btn" onclick="dodajKierowce()">Stwórz Konto Kierowcy</button>
-
-      <label style="margin-top: 20px;">Zarejestrowani Kierowcy:</label>
-      <div id="lista-kierowcow"></div>
+      <button class="btn" onclick="dodajKierowce()">Stwórz Konto</button>
     </div>
 
-    <!-- KARTA 2: KREATOR TRAS I PRZYSTANKÓW -->
+    <!-- PRZYPISYWANIE GRAFIKU -->
     <div class="card">
-      <h2>2. Kreator Linii i Przystanków</h2>
-      <label>Numer Linii:</label>
-      <input type="text" id="l-num" placeholder="np. 161">
-      <label>Relacja Trasy:</label>
-      <input type="text" id="l-rel" placeholder="np. Zakładowa MPK ➔ Rondo Legionów">
-      
-      <label>Przystanki i czasy przejazdu (w sekundach):</label>
-      <div id="przystanki-container">
-        <div class="stop-row">
-          <input type="text" placeholder="Nazwa przystanku" class="p-nazwa" value="Zakładowa MPK">
-          <input type="number" placeholder="Czas (s)" class="p-czas" value="0" style="width: 80px;">
-        </div>
-      </div>
-      <button class="btn" style="background: var(--bg); color: #fff; border: 1px solid var(--border);" onclick="dodajWierszPrzystanku()">+ Dodaj Kolejny Przystanek</button>
-      <button class="btn btn-green" onclick="zapiszLinie()">Zapisz Linię w Bazie</button>
-    </div>
-
-    <!-- KARTA 3: GRAFIK I PRZERWY -->
-    <div class="card">
-      <h2>3. Planowanie Służby i Przerw</h2>
-      <label>Wybierz Kierowcę:</label>
+      <h2>2. Przypisz Grafik</h2>
+      <label>Kierowca:</label>
       <select id="g-kierowca"></select>
-
-      <label>Dzień Miesiąca (Sierpień 2026):</label>
-      <input type="number" id="g-dzien" min="1" max="31" value="9">
-
+      <label>Dzień Miesiąca:</label>
+      <input type="number" id="g-dzien" value="9" min="1" max="31">
       <label>Linia:</label>
-      <select id="g-linia"></select>
-
-      <label>Liczba Kółek:</label>
-      <input type="number" id="g-kolek" value="4" min="1">
-
-      <label>Harmonogram Przerw (wybierz po których kółkach):</label>
-      <div style="display: flex; gap: 10px; margin-top: 5px;">
-        <label><input type="checkbox" id="p-k1" value="1" checked> Po 1. kółku</label>
-        <label><input type="checkbox" id="p-k3" value="3" checked> Po 3. kółku (kolejne 2)</label>
-      </div>
-
-      <button class="btn" onclick="zapiszGrafik()">Zapisz Grafik i Wyślij Powiadomienie</button>
+      <input type="text" id="g-linia" value="161">
+      <button class="btn" onclick="zapiszGrafik()">Zapisz w Grafiku</button>
     </div>
   </div>
 
   <script>
-    function getDB() { return JSON.parse(localStorage.getItem('mpk_db_v2')) || { kierowcy: {}, linie: {}, grafiki: {}, zgloszenia: [] }; }
-    function saveDB(db) { localStorage.setItem('mpk_db_v2', JSON.stringify(db)); odswiezUI(); }
+    function getDB() { return JSON.parse(localStorage.getItem('mpk_db_v2')) || { kierowcy: {}, grafiki: {}, zgloszenia: [] }; }
+    function saveDB(db) { localStorage.setItem('mpk_db_v2', JSON.stringify(db)); odswiez(); }
 
     function dodajKierowce() {
       const name = document.getElementById('k-name').value.trim();
       const login = document.getElementById('k-login').value.trim().toLowerCase();
-      if(!name || !login) return alert('Wypełnij pola!');
+      if (!name || !login) return alert('Wpisz dane!');
+
       const db = getDB();
       db.kierowcy[login] = { nazwa: name, login: login };
       saveDB(db);
-      document.getElementById('k-name').value = '';
-      document.getElementById('k-login').value = '';
-    }
-
-    function dodajWierszPrzystanku() {
-      const div = document.createElement('div');
-      div.className = 'stop-row';
-      div.innerHTML = `<input type="text" placeholder="Nazwa przystanku" class="p-nazwa"><input type="number" placeholder="Czas (s)" class="p-czas" style="width: 80px;">`;
-      document.getElementById('przystanki-container').appendChild(div);
-    }
-
-    function zapiszLinie() {
-      const num = document.getElementById('l-num').value.trim();
-      const rel = document.getElementById('l-rel').value.trim();
-      const nazwy = document.querySelectorAll('.p-nazwa');
-      const czasy = document.querySelectorAll('.p-czas');
-
-      let przystanki = [];
-      nazwy.forEach((n, idx) => {
-        if(n.value.trim()) {
-          przystanki.push({ nazwa: n.value.trim(), czas_sek: parseInt(czasy[idx].value) || 0 });
-        }
-      });
-
-      if(!num || przystanki.length === 0) return alert('Uzupełnij numer linii i przystanki!');
-      const db = getDB();
-      db.linie[num] = { numer: num, relacja: rel, przystanki: przystanki };
-      saveDB(db);
-      alert('Linia została zapisana!');
+      alert('Dodano kierowcę!');
     }
 
     function zapiszGrafik() {
       const k = document.getElementById('g-kierowca').value;
       const dzien = document.getElementById('g-dzien').value;
       const linia = document.getElementById('g-linia').value;
-      const kolek = parseInt(document.getElementById('g-kolek').value);
-
-      let przerwy = [];
-      if(document.getElementById('p-k1').checked) przerwy.push(1);
-      if(document.getElementById('p-k3').checked) przerwy.push(3);
-
-      if(!k || !linia) return alert('Wybierz kierowcę i linię!');
 
       const db = getDB();
-      if(!db.grafiki[k]) db.grafiki[k] = {};
-
-      db.grafiki[k][dzien] = {
-        linia: linia,
-        kolek: kolek,
-        przerwy: przerwy,
-        status: 'Zaplanowano'
-      };
-
+      if (!db.grafiki[k]) db.grafiki[k] = {};
+      db.grafiki[k][dzien] = { linia: linia, kolek: 4 };
       saveDB(db);
-      alert(`Pomyślnie ustalono grafik na dzień ${dzien}!`);
+      alert('Grafik zapisany!');
     }
 
-    function odswiezUI() {
+    function odswiezZgloszenia() {
       const db = getDB();
-      const kDiv = document.getElementById('lista-kierowcow');
-      const kSelect = document.getElementById('g-kierowca');
-      const lSelect = document.getElementById('g-linia');
+      const container = document.getElementById('lista-zgloszen');
+      container.innerHTML = '';
 
-      kDiv.innerHTML = ''; kSelect.innerHTML = ''; lSelect.innerHTML = '';
+      if (!db.zgloszenia || db.zgloszenia.length === 0) {
+        container.innerHTML = '<div style="color: var(--text-dim); font-size: 12px;">Brak nowych zgłoszeń.</div>';
+        return;
+      }
 
+      db.zgloszenia.reverse().forEach(z => {
+        container.innerHTML += `
+          <div class="notif-box">
+            <strong>${z.kierowca}</strong> [${z.czas}]: <span style="color: var(--accent);">${z.typ}</span>
+          </div>
+        `;
+      });
+    }
+
+    function odswiez() {
+      const db = getDB();
+      const select = document.getElementById('g-kierowca');
+      select.innerHTML = '';
       Object.values(db.kierowcy).forEach(k => {
-        kDiv.innerHTML += `<div class="driver-badge"><span><strong>${k.nazwa}</strong> (${k.login})</span></div>`;
-        kSelect.innerHTML += `<option value="${k.login}">${k.nazwa}</option>`;
+        select.innerHTML += `<option value="${k.login}">${k.nazwa}</option>`;
       });
-
-      Object.values(db.linie).forEach(l => {
-        lSelect.innerHTML += `<option value="${l.numer}">Linia ${l.numer} (${l.relacja})</option>`;
-      });
+      odswiezZgloszenia();
     }
 
-    // Załadowanie podstawowych danych przy pierwszym uruchomieniu
-    const db = getDB();
-    if(Object.keys(db.linie).length === 0) {
-      db.linie["161"] = {
-        numer: "161",
-        relacja: "Zakładowa MPK ➔ Rondo Legionów Polskich",
-        przystanki: [
-          { nazwa: "Zakładowa MPK", czas_sek: 0 }, { nazwa: "Plac Wolności", czas_sek: 120 },
-          { nazwa: "Reja", czas_sek: 90 }, { nazwa: "Brzechwy", czas_sek: 60 },
-          { nazwa: "Na bruku", czas_sek: 120 }, { nazwa: "Sukiennicza", czas_sek: 90 },
-          { nazwa: "Kamienna n/ż", czas_sek: 60 }, { nazwa: "Rondo Legionów Polskich", czas_sek: 50 }
-        ]
-      };
-      saveDB(db);
-    } else {
-      odswiezUI();
-    }
+    odswiez();
   </script>
 </body>
 </html>
