@@ -677,24 +677,24 @@
 
       if (kierowcyBaza.length === 0) {
         box.innerHTML = `<div style="color: var(--text-dim); font-size: 13px; text-align: center; padding: 10px;">Brak zarejestrowanych kierowców.</div>`;
-        return;
+      } else {
+        kierowcyBaza.forEach(k => {
+          box.innerHTML += `
+            <div class="list-item">
+              <span>👨‍✈️ <strong>${k.name}</strong> <span style="font-size: 11px; color: var(--text-dim);">(Login: ${k.login})</span></span>
+              <button style="background: none; border: none; color: #ff4d4d; cursor: pointer; font-size: 16px; padding: 4px 8px;" onclick="usunKierowce(${k.id})">🗑️ Usuń</button>
+            </div>
+          `;
+          if (selectG) selectG.innerHTML += `<option value="${k.id}">${k.name}</option>`;
+          if (selectM) selectM.innerHTML += `<option value="${k.id}">${k.name}</option>`;
+        });
       }
 
-      kierowcyBaza.forEach(k => {
-        box.innerHTML += `
-          <div class="list-item">
-            <span>👨‍✈️ <strong>${k.name}</strong> <span style="font-size: 11px; color: var(--text-dim);">(Login: ${k.login})</span></span>
-            <button style="background: none; border: none; color: #ff4d4d; cursor: pointer; font-size: 16px; padding: 4px 8px;" onclick="usunKierowce(${k.id})">🗑️ Usuń</button>
-          </div>
-        `;
-        if (selectG) selectG.innerHTML += `<option value="${k.id}">${k.name}</option>`;
-        if (selectM) selectM.innerHTML += `<option value="${k.id}">${k.name}</option>`;
-      });
-
       uaktualnijSelectyLinii();
+      generujKalendarzGrafika();
     }
 
-    /* GRAFIK */
+    /* GRAFIK - NAPRAWIONA FUNKCJA GENEROWANIA DNI */
     function generujKalendarzGrafika() {
       const grid = document.getElementById('disp-cal-grid');
       if (!grid) return;
@@ -706,12 +706,14 @@
       for (let i = 0; i < 5; i++) grid.innerHTML += `<div></div>`;
 
       const selectG = document.getElementById('select-grafik-kierowca');
-      if (!selectG || !selectG.value) return;
-      const kierowcaId = selectG.value;
+      const kierowcaId = selectG ? selectG.value : null;
 
       for (let d = 1; d <= 31; d++) {
-        const key = `${kierowcaId}_${d}`;
-        const sluzba = grafikBaza[key];
+        let sluzba = null;
+        if (kierowcaId) {
+          const key = `${kierowcaId}_${d}`;
+          sluzba = grafikBaza[key];
+        }
         const isSelected = (wybranyDzienKierowcy === d);
 
         grid.innerHTML += `
@@ -740,7 +742,8 @@
     function zapiszSluzbeDoGrafika() {
       if (!wybranyDzienKierowcy) return alert("Wybierz najpierw dzień z kalendarza!");
 
-      const kierowcaId = document.getElementById('select-grafik-kierowca').value;
+      const selectG = document.getElementById('select-grafik-kierowca');
+      const kierowcaId = selectG ? selectG.value : null;
       if (!kierowcaId) return alert("Brak wybranego kierowcy!");
 
       const linia = document.getElementById('g-select-linia').value;
