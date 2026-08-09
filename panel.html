@@ -2,220 +2,213 @@
 <html lang="pl">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Panel Dyspozytora - Drobin Urbanow MPK</title>
   <style>
-    * { box-sizing: border-box; margin: 0; padding: 0; }
-    body {
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-      background: #0d1117;
-      color: #f0f6fc;
-      padding: 20px;
+    :root {
+      --bg: #0b0e14;
+      --card-bg: #151b26;
+      --accent: #ff8c00;
+      --accent-hover: #e07b00;
+      --text: #f0f6fc;
+      --text-dim: #8b949e;
+      --border: #212936;
+      --green: #2ea043;
     }
-    h1 { color: #f28c28; margin-bottom: 20px; font-size: 24px; border-bottom: 1px solid #30363d; padding-bottom: 10px; }
-    
-    .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
-    .card {
-      background: #161b22;
-      border: 1px solid #30363d;
-      border-radius: 10px;
-      padding: 20px;
-    }
-    .card h2 { color: #f28c28; font-size: 16px; margin-bottom: 15px; border-bottom: 1px solid #21262d; padding-bottom: 8px; }
-    
-    label { display: block; font-size: 12px; color: #8b949e; margin: 10px 0 4px 0; }
-    input, select {
-      width: 100%;
-      padding: 10px;
-      background: #0d1117;
-      border: 1px solid #30363d;
-      border-radius: 6px;
-      color: #fff;
-      font-size: 13px;
-    }
-    
-    .btn {
-      background: #2ea043;
-      color: white;
-      border: none;
-      padding: 10px 16px;
-      font-weight: bold;
-      border-radius: 6px;
-      cursor: pointer;
-      margin-top: 15px;
-      width: 100%;
-    }
-    .btn:hover { opacity: 0.9; }
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+    body { background: var(--bg); color: var(--text); padding: 25px; }
 
-    .driver-list { margin-top: 10px; }
-    .driver-item { background: #21262d; padding: 10px; border-radius: 6px; margin-bottom: 8px; font-size: 13px; border-left: 3px solid #f28c28; }
+    header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; padding-bottom: 15px; border-bottom: 1px solid var(--border); }
+    header h1 { color: var(--accent); font-size: 24px; display: flex; align-items: center; gap: 10px; }
+
+    .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); gap: 20px; }
+    .card { background: var(--card-bg); border: 1px solid var(--border); border-radius: 12px; padding: 20px; box-shadow: 0 4px 20px rgba(0,0,0,0.3); }
+    .card h2 { color: var(--accent); font-size: 16px; margin-bottom: 15px; border-bottom: 1px solid var(--border); padding-bottom: 8px; }
+
+    label { display: block; font-size: 12px; color: var(--text-dim); margin: 12px 0 4px 0; font-weight: bold; }
+    input, select, textarea {
+      width: 100%; padding: 10px; background: var(--bg); border: 1px solid var(--border); border-radius: 6px; color: #fff; font-size: 13px;
+    }
+    input:focus, select:focus { border-color: var(--accent); outline: none; }
+
+    .btn { background: var(--accent); color: #000; border: none; padding: 12px; font-weight: bold; border-radius: 6px; cursor: pointer; width: 100%; margin-top: 15px; transition: 0.2s; }
+    .btn:hover { background: var(--accent-hover); }
+    .btn-green { background: var(--green); color: #fff; }
+
+    .stop-row { display: flex; gap: 8px; margin-bottom: 8px; align-items: center; }
+    .stop-row input { margin: 0; }
+    
+    .driver-badge { background: var(--bg); border: 1px solid var(--border); padding: 8px; border-radius: 6px; margin-bottom: 6px; font-size: 12px; border-left: 3px solid var(--accent); display: flex; justify-content: space-between; }
   </style>
 </head>
 <body>
 
-  <h1>🚍 Panel Dyspozytora - Drobin Urbanow MPK</h1>
+  <header>
+    <h1>🚍 Centrala Dyspozytorska MPK</h1>
+    <span style="font-size: 12px; color: var(--text-dim);">System Zarządzania Torem i Grafikiem v2.0</span>
+  </header>
 
   <div class="grid">
-    <!-- KARTA 1: TWORZENIE KIEROWCÓW -->
+    <!-- KARTA 1: DODAWANIE KIEROWCÓW -->
     <div class="card">
-      <h2>1. Dodaj Nowego Kierowcę</h2>
-      <label>Imię i Nazwisko / Nick (Roblox):</label>
-      <input type="text" id="new-name" placeholder="np. Jan Kowalski">
-      
-      <label>Login Kierowcy (do logowania na tel):</label>
-      <input type="text" id="new-login" placeholder="np. kowalski102">
-      
+      <h2>1. Konto Kierowcy</h2>
+      <label>Imię i Nazwisko / Nick:</label>
+      <input type="text" id="k-name" placeholder="np. Jan Kowalski">
+      <label>Login do aplikacji:</label>
+      <input type="text" id="k-login" placeholder="np. kowalski102">
       <button class="btn" onclick="dodajKierowce()">Stwórz Konto Kierowcy</button>
 
-      <h2 style="margin-top: 25px;">Lista Kierowców:</h2>
-      <div id="drivers-container" class="driver-list"></div>
+      <label style="margin-top: 20px;">Zarejestrowani Kierowcy:</label>
+      <div id="lista-kierowcow"></div>
     </div>
 
-    <!-- KARTA 2: PRZYPISYWANIE GRAFIKU -->
+    <!-- KARTA 2: KREATOR TRAS I PRZYSTANKÓW -->
     <div class="card">
-      <h2>2. Przypisz Grafik (Sierpień 2026)</h2>
+      <h2>2. Kreator Linii i Przystanków</h2>
+      <label>Numer Linii:</label>
+      <input type="text" id="l-num" placeholder="np. 161">
+      <label>Relacja Trasy:</label>
+      <input type="text" id="l-rel" placeholder="np. Zakładowa MPK ➔ Rondo Legionów">
       
-      <label>Wybierz Kierowcę:</label>
-      <select id="select-driver"></select>
+      <label>Przystanki i czasy przejazdu (w sekundach):</label>
+      <div id="przystanki-container">
+        <div class="stop-row">
+          <input type="text" placeholder="Nazwa przystanku" class="p-nazwa" value="Zakładowa MPK">
+          <input type="number" placeholder="Czas (s)" class="p-czas" value="0" style="width: 80px;">
+        </div>
+      </div>
+      <button class="btn" style="background: var(--bg); color: #fff; border: 1px solid var(--border);" onclick="dodajWierszPrzystanku()">+ Dodaj Kolejny Przystanek</button>
+      <button class="btn btn-green" onclick="zapiszLinie()">Zapisz Linię w Bazie</button>
+    </div>
 
-      <label>Dzień Miesiąca (1 - 31):</label>
-      <input type="number" id="schedule-day" min="1" max="31" value="8">
+    <!-- KARTA 3: GRAFIK I PRZERWY -->
+    <div class="card">
+      <h2>3. Planowanie Służby i Przerw</h2>
+      <label>Wybierz Kierowcę:</label>
+      <select id="g-kierowca"></select>
+
+      <label>Dzień Miesiąca (Sierpień 2026):</label>
+      <input type="number" id="g-dzien" min="1" max="31" value="9">
 
       <label>Linia:</label>
-      <select id="schedule-line">
-        <option value="161">Linia 161 (Zakładowa MPK ➔ Rondo Legionów)</option>
-      </select>
+      <select id="g-linia"></select>
 
-      <label>Liczba Kółek do Wykonania:</label>
-      <input type="number" id="schedule-laps" min="1" value="4">
+      <label>Liczba Kółek:</label>
+      <input type="number" id="g-kolek" value="4" min="1">
 
-      <label>Przerwa Po Kółku Numer:</label>
-      <input type="number" id="schedule-break-lap" min="1" value="2" placeholder="np. 2 (po 2. kółku będzie przerwa)">
+      <label>Harmonogram Przerw (wybierz po których kółkach):</label>
+      <div style="display: flex; gap: 10px; margin-top: 5px;">
+        <label><input type="checkbox" id="p-k1" value="1" checked> Po 1. kółku</label>
+        <label><input type="checkbox" id="p-k3" value="3" checked> Po 3. kółku (kolejne 2)</label>
+      </div>
 
-      <button class="btn" style="background: #f28c28; color: #000;" onclick="zapiszGrafik()">Zapisz w Grafiku Miesięcznym</button>
+      <button class="btn" onclick="zapiszGrafik()">Zapisz Grafik i Wyślij Powiadomienie</button>
     </div>
   </div>
 
   <script>
-    function getDB() {
-      return JSON.parse(localStorage.getItem('mpk_db')) || { kierowcy: {}, grafiki: {} };
-    }
-
-    function saveDB(data) {
-      localStorage.setItem('mpk_db', JSON.stringify(data));
-      odswiezKomponenty();
-    }
+    function getDB() { return JSON.parse(localStorage.getItem('mpk_db_v2')) || { kierowcy: {}, linie: {}, grafiki: {}, zgloszenia: [] }; }
+    function saveDB(db) { localStorage.setItem('mpk_db_v2', JSON.stringify(db)); odswiezUI(); }
 
     function dodajKierowce() {
-      const name = document.getElementById('new-name').value.trim();
-      const login = document.getElementById('new-login').value.trim().toLowerCase();
-
-      if (!name || !login) return alert('Wypełnij pola!');
-
+      const name = document.getElementById('k-name').value.trim();
+      const login = document.getElementById('k-login').value.trim().toLowerCase();
+      if(!name || !login) return alert('Wypełnij pola!');
       const db = getDB();
       db.kierowcy[login] = { nazwa: name, login: login };
       saveDB(db);
+      document.getElementById('k-name').value = '';
+      document.getElementById('k-login').value = '';
+    }
 
-      document.getElementById('new-name').value = '';
-      document.getElementById('new-login').value = '';
-      alert('Kierowca dodany!');
+    function dodajWierszPrzystanku() {
+      const div = document.createElement('div');
+      div.className = 'stop-row';
+      div.innerHTML = `<input type="text" placeholder="Nazwa przystanku" class="p-nazwa"><input type="number" placeholder="Czas (s)" class="p-czas" style="width: 80px;">`;
+      document.getElementById('przystanki-container').appendChild(div);
+    }
+
+    function zapiszLinie() {
+      const num = document.getElementById('l-num').value.trim();
+      const rel = document.getElementById('l-rel').value.trim();
+      const nazwy = document.querySelectorAll('.p-nazwa');
+      const czasy = document.querySelectorAll('.p-czas');
+
+      let przystanki = [];
+      nazwy.forEach((n, idx) => {
+        if(n.value.trim()) {
+          przystanki.push({ nazwa: n.value.trim(), czas_sek: parseInt(czasy[idx].value) || 0 });
+        }
+      });
+
+      if(!num || przystanki.length === 0) return alert('Uzupełnij numer linii i przystanki!');
+      const db = getDB();
+      db.linie[num] = { numer: num, relacja: rel, przystanki: przystanki };
+      saveDB(db);
+      alert('Linia została zapisana!');
     }
 
     function zapiszGrafik() {
-      const login = document.getElementById('select-driver').value;
-      const dzien = document.getElementById('schedule-day').value;
-      const linia = document.getElementById('schedule-line').value;
-      const kolek = parseInt(document.getElementById('schedule-laps').value);
-      const przerwaKolko = parseInt(document.getElementById('schedule-break-lap').value);
+      const k = document.getElementById('g-kierowca').value;
+      const dzien = document.getElementById('g-dzien').value;
+      const linia = document.getElementById('g-linia').value;
+      const kolek = parseInt(document.getElementById('g-kolek').value);
 
-      if (!login) return alert('Wybierz kierowcę!');
+      let przerwy = [];
+      if(document.getElementById('p-k1').checked) przerwy.push(1);
+      if(document.getElementById('p-k3').checked) przerwy.push(3);
+
+      if(!k || !linia) return alert('Wybierz kierowcę i linię!');
 
       const db = getDB();
-      if (!db.grafiki[login]) db.grafiki[login] = {};
+      if(!db.grafiki[k]) db.grafiki[k] = {};
 
-      db.grafiki[login][dzien] = {
+      db.grafiki[k][dzien] = {
         linia: linia,
         kolek: kolek,
-        przerwaPoKolku: przerwaKolko,
-        relacja: "Zakładowa MPK ➔ Rondo Legionów Polskich",
-        przystanki: [
-          { nazwa: "Zakładowa MPK", czas_sek: 0 },
-          { nazwa: "Plac Wolności", czas_sek: 120 },
-          { nazwa: "Reja", czas_sek: 90 },
-          { nazwa: "Brzechwy", czas_sek: 60 },
-          { nazwa: "Na bruku", czas_sek: 120 },
-          { nazwa: "Sukiennicza", czas_sek: 90 },
-          { nazwa: "Kamienna n/ż", czas_sek: 60 },
-          { nazwa: "Rondo Legionów Polskich", czas_sek: 50 }
-        ]
+        przerwy: przerwy,
+        status: 'Zaplanowano'
       };
 
       saveDB(db);
-      alert(`Przypisano grafik na dzień ${dzien} dla ${login}!`);
+      alert(`Pomyślnie ustalono grafik na dzień ${dzien}!`);
     }
 
-    function odswiezKomponenty() {
+    function odswiezUI() {
       const db = getDB();
-      const listContainer = document.getElementById('drivers-container');
-      const selectDriver = document.getElementById('select-driver');
+      const kDiv = document.getElementById('lista-kierowcow');
+      const kSelect = document.getElementById('g-kierowca');
+      const lSelect = document.getElementById('g-linia');
 
-      listContainer.innerHTML = '';
-      selectDriver.innerHTML = '';
+      kDiv.innerHTML = ''; kSelect.innerHTML = ''; lSelect.innerHTML = '';
 
       Object.values(db.kierowcy).forEach(k => {
-        listContainer.innerHTML += `<div class="driver-item"><strong>${k.nazwa}</strong> (Login: ${k.login})</div>`;
-        selectDriver.innerHTML += `<option value="${k.login}">${k.nazwa} (${k.login})</option>`;
+        kDiv.innerHTML += `<div class="driver-badge"><span><strong>${k.nazwa}</strong> (${k.login})</span></div>`;
+        kSelect.innerHTML += `<option value="${k.login}">${k.nazwa}</option>`;
+      });
+
+      Object.values(db.linie).forEach(l => {
+        lSelect.innerHTML += `<option value="${l.numer}">Linia ${l.numer} (${l.relacja})</option>`;
       });
     }
 
-    odswiezKomponenty();
+    // Załadowanie podstawowych danych przy pierwszym uruchomieniu
+    const db = getDB();
+    if(Object.keys(db.linie).length === 0) {
+      db.linie["161"] = {
+        numer: "161",
+        relacja: "Zakładowa MPK ➔ Rondo Legionów Polskich",
+        przystanki: [
+          { nazwa: "Zakładowa MPK", czas_sek: 0 }, { nazwa: "Plac Wolności", czas_sek: 120 },
+          { nazwa: "Reja", czas_sek: 90 }, { nazwa: "Brzechwy", czas_sek: 60 },
+          { nazwa: "Na bruku", czas_sek: 120 }, { nazwa: "Sukiennicza", czas_sek: 90 },
+          { nazwa: "Kamienna n/ż", czas_sek: 60 }, { nazwa: "Rondo Legionów Polskich", czas_sek: 50 }
+        ]
+      };
+      saveDB(db);
+    } else {
+      odswiezUI();
+    }
   </script>
-</body>
-</html><!DOCTYPE html>
-<html lang="pl">
-<head>
-  <meta charset="UTF-8">
-  <title>Panel Dyspozytora - Drobin Urbanow MPK</title>
-  <style>
-    body { font-family: sans-serif; background: #0d1117; color: #fff; padding: 20px; }
-    .card { background: #161b22; padding: 20px; border-radius: 8px; border: 1px solid #30363d; margin-bottom: 20px; max-width: 600px; }
-    h2 { color: #f28c28; margin-bottom: 15px; }
-    input, select { width: 100%; padding: 10px; margin-bottom: 10px; background: #0d1117; border: 1px solid #30363d; color: #fff; border-radius: 4px; }
-    .btn { background: #2ea043; color: white; border: none; padding: 10px 15px; font-weight: bold; border-radius: 4px; cursor: pointer; }
-    .stop-row { display: flex; gap: 10px; }
-  </style>
-</head>
-<body>
-
-  <h1>Panel Zarządzania Grafikiem MPK Roblox</h1>
-  
-  <div class="card">
-    <h2>1. Przypisz Grafik dla Kierowcy</h2>
-    <label>ID / Nick Kierowcy z Robloxa:</label>
-    <input type="text" placeholder="np. kierowca1">
-
-    <label>Wybierz Linię:</label>
-    <select>
-      <option>Linia 161 (Zakładowa MPK -> Rondo Legionów)</option>
-    </select>
-
-    <label>Liczba Kółek do wykonania:</label>
-    <input type="number" value="3">
-
-    <button class="btn">Wyślij Grafik i Wyślij Powiadomienie PUSH</button>
-  </div>
-
-  <div class="card">
-    <h2>2. Kreator Przystanków i Czasów (Sekundy/Minuty)</h2>
-    <input type="text" placeholder="Numer Linii (np. 161)">
-    
-    <h3>Przystanki:</h3>
-    <div class="stop-row">
-      <input type="text" placeholder="Nazwa Przystanku (np. Plac Wolności)">
-      <input type="number" placeholder="Czas dojazdu (w sekundach)" style="width: 150px;">
-    </div>
-    
-    <button class="btn" style="background: #f28c28;">+ Dodaj kolejny przystanek</button>
-  </div>
-
 </body>
 </html>
