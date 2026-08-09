@@ -22,7 +22,6 @@
       font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; overflow: hidden;
     }
 
-    /* AUTOMATYCZNE DOPASOWANIE DO SYSTEMÓW */
     .app-viewport {
       display: flex; width: 100vw; height: 100dvh;
       padding-top: env(safe-area-inset-top, 0px);
@@ -46,10 +45,10 @@
       border: 1px solid var(--border); border-radius: 8px; color: #fff; font-size: 13px;
     }
 
-    /* NOCNY / NOWOCZESNY LAYOUT APLIKACJI */
+    /* APLIKACJA GŁÓWNA */
     #main-layout { display: none; width: 100vw; height: 100dvh; }
 
-    /* BOCZNE MENU NAWIGACJI */
+    /* MENU BOCZNE */
     .sidebar-menu {
       width: 260px; background: var(--card-bg); border-right: 1px solid var(--border);
       display: flex; flex-direction: column; justify-content: space-between; padding: 15px;
@@ -57,10 +56,11 @@
     .nav-item {
       padding: 12px; border-radius: 8px; color: var(--text-dim); font-weight: bold;
       font-size: 13px; margin-bottom: 6px; cursor: pointer; display: flex; align-items: center; gap: 10px;
+      transition: background 0.2s, color 0.2s;
     }
     .nav-item.active { background: var(--accent); color: #000; }
 
-    /* GŁÓWNY PULPIT DASHBOARD */
+    /* CONTENT */
     .content-area { flex: 1; display: flex; flex-direction: column; padding: 15px; overflow-y: auto; gap: 15px; }
 
     .welcome-card {
@@ -68,13 +68,11 @@
       border-radius: 12px; padding: 15px; display: flex; justify-content: space-between; align-items: center;
     }
 
-    /* DUŻY ROZCIĄGNIĘTY GRAFIK MIESIĘCZNY */
+    /* KALENDARZ GRAFIKU */
     .calendar-container {
       background: var(--card-bg); border: 1px solid var(--border); border-radius: 12px; padding: 15px; flex: 1;
     }
-    .calendar-grid {
-      display: grid; grid-template-columns: repeat(7, 1fr); gap: 8px; margin-top: 10px;
-    }
+    .calendar-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 8px; margin-top: 10px; }
     .day-box {
       background: var(--bg); border: 1px solid var(--border); border-radius: 8px;
       padding: 8px; min-height: 65px; display: flex; flex-direction: column; justify-content: space-between; font-size: 11px;
@@ -82,14 +80,15 @@
     .day-box.work { border-color: var(--accent); background: #1c170f; }
     .day-box.free { border-color: var(--green); background: #0e1a12; }
 
-    /* EKRAN JAZDY TRASY */
-    #drive-screen { display: none; width: 100%; height: 100%; flex-direction: column; gap: 10px; }
+    /* TRASA I PRZYSTANKI */
     .stops-scroll { flex: 1; background: var(--card-bg); border: 1px solid var(--border); border-radius: 10px; padding: 10px; overflow-y: auto; }
     .stop-row { padding: 10px; background: var(--bg); border-radius: 6px; margin-bottom: 6px; border-left: 4px solid var(--border); display: flex; justify-content: space-between; }
     .stop-row.active { border-left-color: var(--accent); background: #1f1a10; }
+    .stop-row.passed { border-left-color: var(--green); opacity: 0.4; }
 
-    /* PRZYCISKI AKCJI */
+    /* PRZYCISKI */
     .btn { background: var(--accent); color: #000; border: none; padding: 12px; font-weight: bold; border-radius: 8px; cursor: pointer; text-align: center; }
+    .btn:disabled { background: var(--border); color: var(--text-dim); cursor: not-allowed; }
     .btn-secondary { background: var(--border); color: #fff; }
     .btn-red { background: var(--red); color: #fff; }
   </style>
@@ -104,42 +103,40 @@
       
       <input type="text" id="l-user" class="input-field" placeholder="Login kierowcy...">
       
-      <label style="font-size: 11px; color: var(--text-dim); text-align: left; display: block;">Twój Urządzenie / System:</label>
+      <label style="font-size: 11px; color: var(--text-dim); text-align: left; display: block;">System Urządzenia:</label>
       <select id="l-system" class="select-field">
         <option value="android">📱 Android</option>
         <option value="ios">🍎 iPhone (iOS)</option>
         <option value="pc">💻 Komputer PC</option>
       </select>
 
-      <button class="btn" style="width: 100%; margin-top: 10px;" onclick="zaloguj()">Zaloguj i Włącz Powiadomienia</button>
+      <button class="btn" style="width: 100%; margin-top: 10px;" onclick="zaloguj()">Zaloguj do Systemu</button>
     </div>
   </div>
 
-  <!-- APLIKACJA GŁÓWNA Z MENU -->
+  <!-- MAIN APP -->
   <div id="main-layout" class="app-viewport">
-    <!-- MENUBAR PO BOKU -->
     <div class="sidebar-menu">
       <div>
         <h3 style="color: var(--accent); font-size: 16px; margin-bottom: 20px;">MPK Mobile</h3>
-        <div class="nav-item active" onclick="pokazWidok('dashboard')">📅 Miesięczny Grafik</div>
-        <div class="nav-item" onclick="pokazWidok('dzis')">🚍 Dzisiejszy Kurs</div>
+        <div id="nav-dash" class="nav-item active" onclick="pokazWidok('dashboard')">📅 Miesięczny Grafik</div>
+        <div id="nav-drive" class="nav-item" onclick="pokazWidok('dzis')">🚍 Dzisiejszy Kurs</div>
       </div>
 
       <div>
-        <button class="btn btn-secondary" style="width: 100%; margin-bottom: 8px; font-size: 11px;" onclick="otworzZgloszenie()">PROŚBA / ZMIANA</button>
+        <button class="btn btn-secondary" style="width: 100%; margin-bottom: 8px; font-size: 11px;" onclick="prosbaOZmiane()">PROŚBA / ZMIANA</button>
         <button class="btn btn-red" style="width: 100%; font-size: 11px;" onclick="wyloguj()">Wyloguj</button>
       </div>
     </div>
 
-    <!-- PRAWY OBSZAR APLIKACJI -->
     <div class="content-area">
       
-      <!-- POWITANIE & KALENDARZ -->
+      <!-- DASHBOARD -->
       <div id="view-dashboard" style="display: flex; flex-direction: column; gap: 15px; height: 100%;">
         <div class="welcome-card">
           <div>
-            <h2 id="w-name" style="font-size: 18px;">Witaj, Kierowco!</h2>
-            <p id="w-date" style="font-size: 12px; color: var(--text-dim);">Dzisiaj jest: --.--.2026 | Godzina: --:--</p>
+            <h2 id="w-name" style="font-size: 18px;">Witaj!</h2>
+            <p id="w-date" style="font-size: 12px; color: var(--text-dim);">Ładowanie zegara...</p>
           </div>
           <button class="btn" onclick="pokazWidok('dzis')">Rozpocznij Dzisiejszy Kurs ➔</button>
         </div>
@@ -158,17 +155,16 @@
         <div class="welcome-card" style="padding: 10px;">
           <div>
             <span style="font-size: 10px; color: var(--text-dim);">AKTYWNA LINIA:</span>
-            <h3 id="d-line" style="color: var(--accent);">Linia --</h3>
+            <h3 id="d-line" style="color: var(--accent);">Linia 161</h3>
           </div>
           <div style="text-align: right;">
-            <span style="font-size: 10px; color: var(--text-dim);">CZAS DO PRZYSTANKU:</span>
+            <span style="font-size: 10px; color: var(--text-dim);">DO NASTĘPNEGO PRZYSTANKU:</span>
             <h2 id="d-timer" style="color: var(--green); font-family: monospace;">00:00</h2>
           </div>
         </div>
 
         <div class="stops-scroll" id="d-stops"></div>
 
-        <!-- PRZYCISKI PROŚBY I DODATKOWEGO KURSU -->
         <div style="display: flex; gap: 8px;">
           <button class="btn btn-secondary" style="flex: 1; font-size: 11px;" onclick="prosbaOZmiane()">⚠️ Prośba o Zmianę / Wolne</button>
           <button class="btn btn-secondary" style="flex: 1; font-size: 11px;" onclick="dodatkowyKurs()">➕ Prośba o Dodatkowy Kurs</button>
@@ -186,31 +182,31 @@
   <script>
     let uzytkownik = null;
     let aktywneKonto = null;
-    let dzisiejszaSluzba = null;
+    let listaPrzystankow = [];
     let indexPrzystanku = 0;
     let timerInt = null;
     let czasSek = 0;
 
-    // Aktualizacja zegara na żywo
     setInterval(() => {
       const now = new Date();
       document.getElementById('w-date').innerText = `Dzisiaj: ${now.toLocaleDateString()} | Godzina: ${now.toLocaleTimeString()}`;
     }, 1000);
 
+    function getDB() { return JSON.parse(localStorage.getItem('mpk_db_v2')) || { kierowcy: {}, linie: {}, grafiki: {}, zgloszenia: [] }; }
+    function saveDB(db) { localStorage.setItem('mpk_db_v2', JSON.stringify(db)); }
+
     function zaloguj() {
       const login = document.getElementById('l-user').value.trim().toLowerCase();
-      const sys = document.getElementById('l-system').value;
-      const db = JSON.parse(localStorage.getItem('mpk_db_v2')) || { kierowcy: {} };
+      const db = getDB();
 
-      if(!db.kierowcy[login]) return alert('Brak konta! Poproś dyspozytora w panel.html o jego utworzenie.');
+      if (!db.kierowcy[login]) {
+        // Tworzenie konta tymczasowego, jeśli brak w bazie
+        db.kierowcy[login] = { nazwa: login, login: login };
+        saveDB(db);
+      }
 
       uzytkownik = db.kierowcy[login];
       aktywneKonto = login;
-
-      // Obsługa powiadomień w przeglądarce
-      if ("Notification" in window) {
-        Notification.requestPermission();
-      }
 
       document.getElementById('login-screen').style.display = 'none';
       document.getElementById('main-layout').style.display = 'flex';
@@ -227,16 +223,21 @@
     function pokazWidok(v) {
       document.getElementById('view-dashboard').style.display = v === 'dashboard' ? 'flex' : 'none';
       document.getElementById('view-drive').style.display = v === 'dzis' ? 'flex' : 'none';
-      if(v === 'dzis') zaladujDzisiejszyKurs();
+
+      // Przełączanie pomarańczowego tła w menu
+      document.getElementById('nav-dash').classList.toggle('active', v === 'dashboard');
+      document.getElementById('nav-drive').classList.toggle('active', v === 'dzis');
+
+      if (v === 'dzis') zaladujDzisiejszyKurs();
     }
 
     function generujKalendarz() {
-      const db = JSON.parse(localStorage.getItem('mpk_db_v2'));
+      const db = getDB();
       const grafiki = (db.grafiki && db.grafiki[aktywneKonto]) ? db.grafiki[aktywneKonto] : {};
       const grid = document.getElementById('cal-grid');
       grid.innerHTML = '';
 
-      for(let i=1; i<=31; i++) {
+      for (let i = 1; i <= 31; i++) {
         const g = grafiki[i];
         grid.innerHTML += `
           <div class="day-box ${g ? 'work' : 'free'}">
@@ -249,52 +250,101 @@
     }
 
     function zaladujDzisiejszyKurs() {
-      const db = JSON.parse(localStorage.getItem('mpk_db_v2'));
-      const dzisDzien = new Date().getDate(); // Pobiera dzisiejszy dzień
-      dzisiejszaSluzba = (db.grafiki && db.grafiki[aktywneKonto]) ? db.grafiki[aktywneKonto][dzisDzien] : null;
+      const db = getDB();
+      
+      // Ładowanie domyślnej linii 161 jeśli brak w bazie
+      listaPrzystankow = [
+        { nazwa: "Zakładowa MPK", czas_sek: 0 },
+        { nazwa: "Plac Wolności", czas_sek: 120 },
+        { nazwa: "Reja", czas_sek: 90 },
+        { nazwa: "Brzechwy", czas_sek: 60 },
+        { nazwa: "Na bruku", czas_sek: 120 },
+        { nazwa: "Sukiennicza", czas_sek: 90 },
+        { nazwa: "Kamienna n/ż", czas_sek: 60 },
+        { nazwa: "Rondo Legionów Polskich", czas_sek: 50 }
+      ];
 
+      renderujPrzystanki();
+    }
+
+    function renderujPrzystanki() {
       const container = document.getElementById('d-stops');
       container.innerHTML = '';
 
-      if(!dzisiejszaSluzba) {
-        document.getElementById('d-line').innerText = 'Brak służby na dziś';
-        container.innerHTML = '<div style="text-align: center; color: var(--text-dim); margin-top: 20px;">Masz dzisiaj wolne! Masz czas na odpoczynek.</div>';
-        document.getElementById('btn-start').disabled = true;
-        return;
-      }
+      listaPrzystankow.forEach((p, idx) => {
+        let cls = '';
+        if (idx < indexPrzystanku) cls = 'passed';
+        if (idx === indexPrzystanku) cls = 'active';
 
-      const liniaInfo = db.linie[dzisiejszaSluzba.linia];
-      document.getElementById('d-line').innerText = `Linia ${liniaInfo.numer} (${liniaInfo.relacja})`;
-      document.getElementById('btn-start').disabled = false;
-
-      liniaInfo.przystanki.forEach((p, idx) => {
         container.innerHTML += `
-          <div class="stop-row ${idx === 0 ? 'active' : ''}">
-            <span><strong>${idx+1}. ${p.nazwa}</strong></span>
+          <div class="stop-row ${cls}">
+            <span><strong>${idx + 1}. ${p.nazwa}</strong></span>
             <span style="font-size: 11px; color: var(--text-dim);">${p.czas_sek}s</span>
           </div>
         `;
       });
     }
 
-    function wyslijPowiadomienie(tytul, tresc) {
-      if ("Notification" in window && Notification.permission === "granted") {
-        new Notification(tytul, { body: tresc });
-      }
-    }
-
     function startJazda() {
       document.getElementById('btn-start').disabled = true;
       document.getElementById('btn-next').disabled = false;
-      wyslijPowiadomienie("MPK Drobin", "Rozpoczęto kurs! Szerokiej drogi.");
+      indexPrzystanku = 0;
+      uruchomOdliczanie();
+    }
+
+    function uruchomOdliczanie() {
+      clearInterval(timerInt);
+      const nast = indexPrzystanku + 1;
+      czasSek = nast < listaPrzystankow.length ? listaPrzystankow[nast].czas_sek : 0;
+
+      odswiezZegar();
+      timerInt = setInterval(() => {
+        if (czasSek > 0) {
+          czasSek--;
+          odswiezZegar();
+        } else {
+          clearInterval(timerInt);
+        }
+      }, 1000);
+    }
+
+    function odswiezZegar() {
+      const m = Math.floor(czasSek / 60);
+      const s = czasSek % 60;
+      document.getElementById('d-timer').innerText = `${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
+    }
+
+    function nastPrzystanek() {
+      if (indexPrzystanku < listaPrzystankow.length - 1) {
+        indexPrzystanku++;
+        renderujPrzystanki();
+        uruchomOdliczanie();
+      } else {
+        clearInterval(timerInt);
+        alert('Koniec kursu na tej linii!');
+        document.getElementById('btn-next').disabled = true;
+        document.getElementById('btn-start').disabled = false;
+      }
     }
 
     function prosbaOZmiane() {
-      alert("Wysłano prośbę do dyspozytora o zmianę linii / udzielenie wolnego.");
+      wyslijZgloszenie("Prośba o Zmianę / Wolne");
     }
 
     function dodatkowyKurs() {
-      alert("Zgłoszono chęć wzięcia dodatkowego kursu! Dyspozytor przydzieli go w panelu.");
+      wyslijZgloszenie("Prośba o Dodatkowy Kurs");
+    }
+
+    function wyslijZgloszenie(typ) {
+      const db = getDB();
+      if (!db.zgloszenia) db.zgloszenia = [];
+      db.zgloszenia.push({
+        kierowca: uzytkownik ? uzytkownik.nazwa : "Kierowca",
+        typ: typ,
+        czas: new Date().toLocaleTimeString()
+      });
+      saveDB(db);
+      alert(`Wysłano powiadomienie do dyspozytora: "${typ}"`);
     }
   </script>
 </body>
