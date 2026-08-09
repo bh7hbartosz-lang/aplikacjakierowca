@@ -442,19 +442,19 @@
     let uzytkownikName = "Jan Kowalski";
     let sidebarHidden = false;
 
-    // DEFINICJA TRAS
+    // DEFINICJA TRAS Z NAZWAMI MÓWIONYMI DO ZAPOWIEDZI
     const trasaPolnocPoludnie = [
-      { nazwa: "1. Północ (Pętla Startowa)", czas: 12 },
-      { nazwa: "2. Rondo", czas: 15 },
-      { nazwa: "3. Szpital", czas: 15 },
-      { nazwa: "4. Południe (Pętla Końcowa)", czas: 10 }
+      { nazwa: "1. Północ (Pętla Startowa)", mowiona: "Północ pętla startowa", czas: 12 },
+      { nazwa: "2. Rondo", mowiona: "Rondo", czas: 15 },
+      { nazwa: "3. Szpital", mowiona: "Szpital", czas: 15 },
+      { nazwa: "4. Południe (Pętla Końcowa)", mowiona: "Południe pętla końcowa", czas: 10 }
     ];
 
     const trasaPoludniePolnoc = [
-      { nazwa: "1. Południe (Pętla Startowa)", czas: 12 },
-      { nazwa: "2. Szpital", czas: 15 },
-      { nazwa: "3. Rondo", czas: 15 },
-      { nazwa: "4. Północ (Pętla Końcowa)", czas: 10 }
+      { nazwa: "1. Południe (Pętla Startowa)", mowiona: "Południe pętla startowa", czas: 12 },
+      { nazwa: "2. Szpital", mowiona: "Szpital", czas: 15 },
+      { nazwa: "3. Rondo", mowiona: "Rondo", czas: 15 },
+      { nazwa: "4. Północ (Pętla Końcowa)", mowiona: "Północ pętla końcowa", czas: 10 }
     ];
 
     let currentLoopCount = 0;
@@ -576,6 +576,15 @@
 
       currentStopIndex = 0;
       renderStops();
+
+      // AUTOMATYCZNA ZAPOWIEDŹ STARTU KURSU
+      const isForward = (currentLoopCount % 2 === 0);
+      const kierunek = isForward ? "Północ do Południe" : "Południe do Północ";
+      const trasa = getAktualnaTrasa();
+      const zapowiedzStartowa = `Linia 161. Kierunek: ${kierunek}. Następny przystanek: ${trasa[0].mowiona}`;
+      
+      czytajTekst(zapowiedzStartowa);
+
       startTimerForStop();
     }
 
@@ -614,6 +623,17 @@
       if (currentStopIndex < trasa.length - 1) {
         currentStopIndex++;
         renderStops();
+        
+        // ZAPOWIEDŹ NASTĘPNEGO PRZYSTANKU
+        const nastepny = trasa[currentStopIndex];
+        const czyOstatni = (currentStopIndex === trasa.length - 1);
+        
+        if (czyOstatni) {
+          czytajTekst(`Przystanek końcowy: ${nastepny.mowiona}. Prosimy o opuszczenie pojazdu.`);
+        } else {
+          czytajTekst(`Następny przystanek: ${nastepny.mowiona}`);
+        }
+
         startTimerForStop();
       } else {
         clearInterval(timerInterval);
@@ -639,12 +659,14 @@
         desc.innerText = `Następny kurs rozpocznie się z przystanku: ${currentLoopCount % 2 === 0 ? 'Północ' : 'Południe'}`;
         btn.innerText = "Zacznij kolejny kurs ▶";
         btn.style.display = "inline-flex";
+        czytajTekst(`Koniec kursu. Ukończono ${currentLoopCount} z 5 kółek.`);
       } else {
         title.innerText = `Ukończono wszystkie 5 z 5 kółek! 🎉`;
         desc.innerText = "Świetna robota! Twój dzień pracy został zakończony.";
         btn.style.display = "none";
         document.getElementById('status-text').innerText = "Zakończono służbę";
         document.getElementById('status-text').style.color = "#2ea043";
+        czytajTekst("Ukończono wszystkie kółka. Dziękujemy za pracę.");
       }
     }
 
@@ -733,7 +755,7 @@
         utterance.rate = 1.0;
         window.speechSynthesis.speak(utterance);
       } else {
-        alert("Twoja przeglądarka nie obsługuje syntezatora mowy.");
+        console.log("Twoja przeglądarka nie obsługuje syntezatora mowy.");
       }
     }
 
@@ -761,7 +783,7 @@
       odpowiedzOdDyspozytora("To jest testowe powiadomienie od dyspozytora MPK Drobin.");
     }
 
-    // GENEROWANIE KALENDARZA DLA SIERPNIA 2026 (ZAKŁADA START W SOBOTĘ)
+    // GENEROWANIE KALENDARZA DLA SIERPNIA 2026 (START W SOBOTĘ)
     function generujKalendarz() {
       const grid = document.getElementById('cal-grid');
       if (!grid) return;
