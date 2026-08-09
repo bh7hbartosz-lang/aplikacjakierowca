@@ -10,14 +10,14 @@
   
   <style>
     :root {
-      --bg-dark: #050505;
-      --border: #1f0b0e;
-      --accent-red: #5c1218;
-      --accent-red-hover: #7d1820;
+      --bg-dark: #000000;
+      --accent-maroon: #5c1218;
+      --accent-maroon-bright: #8a1c24;
+      --accent-maroon-glow: rgba(140, 20, 30, 0.45);
+      --glass-bg: rgba(20, 20, 20, 0.55);
+      --glass-border: rgba(255, 255, 255, 0.08);
       --text-white: #ffffff;
-      --text-dim: #8c8284;
-      --orange-accent: #ff8c00;
-      --green-accent: #2ea043;
+      --text-dim: #999999;
     }
 
     * { box-sizing: border-box; margin: 0; padding: 0; user-select: none; }
@@ -32,11 +32,30 @@
 
     .app-viewport {
       display: flex; width: 100vw; height: 100dvh;
-      padding-top: env(safe-area-inset-top, 0px);
-      padding-bottom: env(safe-area-inset-bottom, 0px);
+      position: relative;
+      overflow: hidden;
     }
 
-    /* EKRAN LOGOWANIA Z BORDOWYMI POŚWIATAMI */
+    /* GLOBALNE POŚWIATY BORDOWE W TLE LEUKU */
+    .bg-glow-top-right {
+      position: absolute; width: 650px; height: 650px;
+      background: radial-gradient(circle, var(--accent-maroon-glow) 0%, rgba(0,0,0,0) 70%);
+      top: -20%; right: -10%;
+      filter: blur(80px);
+      pointer-events: none;
+      z-index: 1;
+    }
+
+    .bg-glow-bottom-left {
+      position: absolute; width: 700px; height: 700px;
+      background: radial-gradient(circle, rgba(110, 15, 22, 0.4) 0%, rgba(0,0,0,0) 70%);
+      bottom: -20%; left: -10%;
+      filter: blur(90px);
+      pointer-events: none;
+      z-index: 1;
+    }
+
+    /* EKRAN LOGOWANIA */
     #login-screen {
       position: fixed; inset: 0;
       background: #000000;
@@ -46,7 +65,6 @@
       overflow: hidden;
     }
 
-    /* POŚWIATA W PRAWO-GÓRNYM ROGU */
     #login-screen::before {
       content: '';
       position: absolute; width: 600px; height: 600px;
@@ -56,7 +74,6 @@
       pointer-events: none;
     }
 
-    /* POŚWIATA W LEWO-DOLNYM ROGU */
     #login-screen::after {
       content: '';
       position: absolute; width: 650px; height: 650px;
@@ -66,7 +83,6 @@
       pointer-events: none;
     }
 
-    /* KARTA LOGOWANIA - GLASSMORPHISM */
     .login-container {
       position: relative;
       width: 100%; max-width: 380px;
@@ -76,49 +92,29 @@
       border: 1px solid rgba(255, 255, 255, 0.08);
       border-top: 1px solid rgba(255, 255, 255, 0.15);
       border-radius: 28px; padding: 36px 28px;
-      box-shadow: 0 25px 50px rgba(0, 0, 0, 0.9), 
-                  0 0 30px rgba(92, 18, 24, 0.15);
+      box-shadow: 0 25px 50px rgba(0, 0, 0, 0.9), 0 0 30px rgba(92, 18, 24, 0.15);
       text-align: center;
+      z-index: 2;
     }
 
-    /* LOGO MPK DROBIN BEZ TŁA */
-    .brand-header { 
-      margin-bottom: 24px; 
-      display: flex; flex-direction: column; align-items: center; 
-    }
-    
-    .brand-logo-svg {
-      width: 230px; height: auto;
-      display: block; margin-bottom: 8px;
-      filter: drop-shadow(0 4px 10px rgba(0,0,0,0.8));
-    }
+    .brand-header { margin-bottom: 24px; display: flex; flex-direction: column; align-items: center; }
+    .brand-logo-svg { width: 220px; height: auto; display: block; margin-bottom: 8px; filter: drop-shadow(0 4px 10px rgba(0,0,0,0.8)); }
+    .brand-title { font-size: 14px; font-weight: 700; color: #ffffff; opacity: 0.9; }
 
-    .brand-title { 
-      font-size: 15px; font-weight: 700; color: #ffffff;
-      opacity: 0.9; letter-spacing: -0.2px;
-    }
-
-    /* FORMULARZ */
     .form-group { margin-bottom: 18px; text-align: left; }
-    .form-group label { 
-      display: block; font-size: 13px; font-weight: 700; color: #e0e0e0; margin-bottom: 8px; margin-left: 4px;
-    }
+    .form-group label { display: block; font-size: 13px; font-weight: 700; color: #e0e0e0; margin-bottom: 8px; margin-left: 4px; }
 
     .input-pill {
-      width: 100%; height: 48px; 
-      background: rgba(255, 255, 255, 0.95); 
-      border: 1px solid rgba(255, 255, 255, 0.2); 
-      border-radius: 24px;
+      width: 100%; height: 48px; background: rgba(255, 255, 255, 0.95);
+      border: 1px solid rgba(255, 255, 255, 0.2); border-radius: 24px;
       padding: 0 20px; font-size: 15px; font-weight: 600; color: #000; outline: none;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.3); 
-      transition: all 0.25s ease;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.3); transition: all 0.25s ease;
       font-family: 'Plus Jakarta Sans', sans-serif;
     }
 
-    .input-pill:focus { 
-      transform: translateY(-2px); 
-      background: #ffffff;
-      box-shadow: 0 6px 18px rgba(255,255,255,0.2), 0 0 12px rgba(92, 18, 24, 0.4); 
+    .input-pill:focus {
+      transform: translateY(-2px); background: #ffffff;
+      box-shadow: 0 6px 18px rgba(255,255,255,0.2), 0 0 12px rgba(92, 18, 24, 0.4);
     }
 
     select.input-pill {
@@ -129,45 +125,150 @@
     }
 
     .btn-login {
-      width: 100%; height: 50px; 
+      width: 100%; height: 50px;
       background: linear-gradient(135deg, #6b141c 0%, #420a0f 100%);
-      border: 1px solid rgba(255, 255, 255, 0.15); 
-      border-radius: 25px; color: #ffffff;
+      border: 1px solid rgba(255, 255, 255, 0.15); border-radius: 25px; color: #ffffff;
       font-size: 15px; font-weight: 800; cursor: pointer; margin-top: 10px;
-      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.5); 
-      transition: all 0.25s ease;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.5); transition: all 0.25s ease;
       font-family: 'Plus Jakarta Sans', sans-serif;
     }
-    .btn-login:hover { 
-      background: linear-gradient(135deg, #821922 0%, #520d13 100%); 
-      transform: translateY(-2px); 
-      box-shadow: 0 10px 25px rgba(92, 18, 24, 0.5);
-    }
-    .btn-login:active { transform: translateY(1px); }
+    .btn-login:hover { background: linear-gradient(135deg, #821922 0%, #520d13 100%); transform: translateY(-2px); }
 
     /* LAYOUT APLIKACJI PO ZALOGOWANIU */
-    #main-layout { display: none; width: 100vw; height: 100dvh; background: #050505; }
-    .sidebar-menu { width: 260px; background: #0d0d0d; border-right: 1px solid #1a1a1a; display: flex; flex-direction: column; justify-content: space-between; padding: 20px; }
-    .nav-item { padding: 14px 16px; border-radius: 12px; color: var(--text-dim); font-weight: 700; font-size: 14px; margin-bottom: 8px; cursor: pointer; transition: 0.2s; }
-    .nav-item.active { background: var(--orange-accent); color: #000; }
-    .content-area { flex: 1; display: flex; flex-direction: column; padding: 20px; overflow-y: auto; gap: 20px; }
+    #main-layout { display: none; width: 100vw; height: 100dvh; position: relative; z-index: 2; }
 
-    .welcome-card { background: linear-gradient(135deg, #141414, #0a0a0a); border: 1px solid #222; border-radius: 16px; padding: 20px; display: flex; justify-content: space-between; align-items: center; }
-    .calendar-container { background: #0d0d0d; border: 1px solid #1a1a1a; border-radius: 16px; padding: 20px; flex: 1; }
+    /* SIDEBAR - LIQUID GLASS STYLE Z BORDOWĄ POŚWIATĄ */
+    .sidebar-menu {
+      width: 290px;
+      height: 100%;
+      background: var(--glass-bg);
+      backdrop-filter: blur(30px) saturate(200%);
+      -webkit-backdrop-filter: blur(30px) saturate(200%);
+      border-right: 1px solid var(--glass-border);
+      box-shadow: 10px 0 30px rgba(0, 0, 0, 0.5), inset -1px 0 15px rgba(138, 28, 36, 0.15);
+      display: flex; flex-direction: column; justify-content: space-between;
+      padding: 30px 20px;
+      z-index: 10;
+      position: relative;
+    }
+
+    /* Subtelny bordowy blask za sidebarem */
+    .sidebar-menu::before {
+      content: '';
+      position: absolute; top: 10%; left: -40px; width: 180px; height: 70%;
+      background: rgba(138, 28, 36, 0.25);
+      filter: blur(45px);
+      pointer-events: none;
+      z-index: -1;
+    }
+
+    .sidebar-logo {
+      display: flex; justify-content: center; align-items: center;
+      margin-bottom: 35px;
+    }
+
+    .nav-list { display: flex; flex-direction: column; gap: 10px; }
+
+    .nav-item {
+      display: flex; align-items: center; gap: 12px;
+      padding: 12px 18px; border-radius: 30px;
+      color: #ffffff; font-weight: 600; font-size: 15px;
+      cursor: pointer; transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+      border: 1px solid transparent;
+    }
+
+    .nav-item:hover {
+      background: rgba(255, 255, 255, 0.05);
+      transform: translateX(4px);
+    }
+
+    /* AKTYWNY PRZYCISK (PILL BORDOWY ZE ZRZUTU) */
+    .nav-item.active {
+      background: linear-gradient(135deg, #7a161e 0%, #470a0f 100%);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      box-shadow: 0 6px 18px rgba(92, 18, 24, 0.4), 0 0 12px rgba(138, 28, 36, 0.3);
+      color: #ffffff;
+      font-weight: 700;
+    }
+
+    .logout-btn {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 12px 18px; color: #ffffff; font-weight: 600; font-size: 15px;
+      cursor: pointer; border-radius: 20px; transition: 0.2s;
+    }
+    .logout-btn:hover { background: rgba(255, 255, 255, 0.08); }
+
+    /* CONTENT AREA & ANIMACJE SEKCJI */
+    .content-area {
+      flex: 1; height: 100%;
+      position: relative;
+      overflow-y: auto;
+      padding: 60px 80px;
+      display: flex; flex-direction: column;
+    }
+
+    /* PŁYNNA ANIMACJA PRZEJŚĆ */
+    .view-section {
+      display: none;
+      opacity: 0;
+      transform: translateY(15px) scale(0.99);
+      transition: opacity 0.35s cubic-bezier(0.4, 0, 0.2, 1), transform 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+      width: 100%; height: 100%;
+    }
+
+    .view-section.active-view {
+      display: flex;
+      flex-direction: column;
+      opacity: 1;
+      transform: translateY(0) scale(1);
+    }
+
+    /* STRONA GŁÓWNA - DOKŁADNIE JAK NA SCREENIE */
+    .hero-welcome {
+      font-size: 64px; font-weight: 500; color: #ffffff;
+      line-height: 1.1; margin-bottom: 8px; letter-spacing: -1px;
+    }
+
+    .hero-name {
+      font-size: 64px; font-weight: 600; color: #ffffff;
+      line-height: 1.1; margin-bottom: 70px; letter-spacing: -1px;
+    }
+
+    .hero-sublabel {
+      font-size: 48px; font-weight: 500; color: #ffffff;
+      line-height: 1.1; margin-bottom: 12px; letter-spacing: -0.5px;
+    }
+
+    .hero-datetime {
+      font-size: 48px; font-weight: 500; color: #ffffff;
+      line-height: 1.1; letter-spacing: -0.5px;
+    }
+
+    /* KARTY DLA INNYCH WIDOKÓW (GRAFIK / KURS / PROŚBY) */
+    .glass-card {
+      background: rgba(15, 15, 15, 0.6);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 24px; padding: 28px;
+      box-shadow: 0 15px 35px rgba(0,0,0,0.6);
+    }
+
     .calendar-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 10px; margin-top: 15px; }
-    .day-box { background: #050505; border: 1px solid #1c1c1c; border-radius: 10px; padding: 10px; min-height: 70px; display: flex; flex-direction: column; justify-content: space-between; font-size: 12px; }
-    .day-box.work { border-color: var(--orange-accent); background: #140c04; }
-    .day-box.free { border-color: var(--green-accent); background: #041207; }
+    .day-box { background: rgba(0, 0, 0, 0.5); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 12px; padding: 12px; min-height: 75px; display: flex; flex-direction: column; justify-content: space-between; font-size: 12px; }
+    .day-box.work { border-color: rgba(138, 28, 36, 0.6); background: rgba(92, 18, 24, 0.15); }
 
-    .stops-scroll { flex: 1; background: #0d0d0d; border: 1px solid #1a1a1a; border-radius: 12px; padding: 15px; overflow-y: auto; }
-    .stop-row { padding: 14px; background: #050505; border-radius: 10px; margin-bottom: 8px; border-left: 5px solid #222; display: flex; justify-content: space-between; }
-    .stop-row.active { border-left-color: var(--orange-accent); background: #140c04; }
-    .stop-row.passed { border-left-color: var(--green-accent); opacity: 0.4; }
+    .stops-scroll { flex: 1; background: rgba(0,0,0,0.4); border: 1px solid rgba(255,255,255,0.08); border-radius: 16px; padding: 20px; overflow-y: auto; margin-bottom: 20px; }
+    .stop-row { padding: 16px; background: rgba(255,255,255,0.03); border-radius: 12px; margin-bottom: 10px; border-left: 4px solid #333; display: flex; justify-content: space-between; align-items: center; }
+    .stop-row.active { border-left-color: var(--accent-maroon-bright); background: rgba(138, 28, 36, 0.2); }
 
-    .btn { background: var(--orange-accent); color: #000; border: none; padding: 14px; font-weight: 800; border-radius: 12px; cursor: pointer; text-align: center; }
-    .btn:disabled { opacity: 0.3; cursor: not-allowed; }
-    .btn-secondary { background: #1a1a1a; color: #fff; }
-    .btn-red { background: var(--accent-red); color: #fff; }
+    .btn-action {
+      background: linear-gradient(135deg, #7a161e 0%, #470a0f 100%);
+      border: 1px solid rgba(255, 255, 255, 0.2); color: #fff;
+      padding: 16px 24px; border-radius: 30px; font-weight: 700; font-size: 15px;
+      cursor: pointer; transition: all 0.2s ease;
+    }
+    .btn-action:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(138, 28, 36, 0.4); }
   </style>
 </head>
 <body>
@@ -176,7 +277,6 @@
   <div id="login-screen">
     <div class="login-container">
       <div class="brand-header">
-        <!-- LOGO MPK DROBIN -->
         <svg class="brand-logo-svg" viewBox="0 0 500 220" xmlns="http://www.w3.org/2000/svg">
           <defs>
             <linearGradient id="maroonGrad" x1="0%" y1="0%" x2="100%" y2="100%">
@@ -200,7 +300,7 @@
 
       <div class="form-group">
         <label for="l-user">Login</label>
-        <input type="text" id="l-user" class="input-pill">
+        <input type="text" id="l-user" class="input-pill" placeholder="Wpisz swój login...">
       </div>
 
       <div class="form-group">
@@ -218,62 +318,123 @@
 
   <!-- APLIKACJA GŁÓWNA -->
   <div id="main-layout" class="app-viewport">
+    
+    <!-- EFEKTY BORDOWEJ POŚWIATY W TLE -->
+    <div class="bg-glow-top-right"></div>
+    <div class="bg-glow-bottom-left"></div>
+
+    <!-- SIDEBAR - LIQUID GLASS ZE ZRZUTU EKRANU -->
     <div class="sidebar-menu">
       <div>
-        <h3 style="color: var(--orange-accent); font-size: 18px; margin-bottom: 25px;">MPK Mobile</h3>
-        <div id="nav-dash" class="nav-item active" onclick="pokazWidok('dashboard')">📅 Miesięczny Grafik</div>
-        <div id="nav-drive" class="nav-item" onclick="pokazWidok('dzis')">🚍 Dzisiejszy Kurs</div>
+        <div class="sidebar-logo">
+          <svg class="brand-logo-svg" style="width: 170px;" viewBox="0 0 500 220" xmlns="http://www.w3.org/2000/svg">
+            <use href="#maroonGrad"/>
+            <g filter="url(#shadow3d)" fill="url(#maroonGrad)" stroke="#1a0406" stroke-width="2">
+              <path d="M 20 20 L 70 20 L 120 110 L 170 20 L 220 20 L 220 150 L 175 150 L 175 65 L 132 145 L 108 145 L 65 65 L 65 150 L 20 150 Z" />
+              <path d="M 228 20 L 310 20 C 350 20 360 45 360 70 C 360 98 345 120 310 120 L 273 120 L 273 150 L 228 150 Z M 273 55 L 273 85 L 302 85 C 315 85 320 78 320 70 C 320 62 315 55 302 55 Z" />
+              <path d="M 368 20 L 413 20 L 413 70 L 452 20 L 500 20 L 448 80 L 500 150 L 452 150 L 413 95 L 413 150 L 368 150 Z" />
+            </g>
+            <text x="260" y="195" font-family="'Plus Jakarta Sans', sans-serif" font-weight="900" font-size="34" fill="url(#maroonGrad)" stroke="#1a0406" stroke-width="1" letter-spacing="12" text-anchor="middle">DROBIN</text>
+          </svg>
+        </div>
+
+        <div class="nav-list">
+          <div id="nav-home" class="nav-item active" onclick="pokazWidok('home')">
+            <span>🧩</span> Strona główna
+          </div>
+          <div id="nav-grafik" class="nav-item" onclick="pokazWidok('grafik')">
+            <span>📅</span> Miesięczny Grafik
+          </div>
+          <div id="nav-kurs" class="nav-item" onclick="pokazWidok('kurs')">
+            <span>🚍</span> Dzisiejszy kurs
+          </div>
+          <div id="nav-prosby" class="nav-item" onclick="pokazWidok('prosby')">
+            <span>🙏</span> Prośby
+          </div>
+          <div id="nav-zmiana" class="nav-item" onclick="pokazWidok('prosby')">
+            <span>🛣️</span> Zmiana kursu
+          </div>
+        </div>
       </div>
 
-      <div>
-        <button class="btn btn-secondary" style="width: 100%; margin-bottom: 10px; font-size: 12px;" onclick="prosbaOZmiane()">PROŚBA / ZMIANA</button>
-        <button class="btn btn-red" style="width: 100%; font-size: 12px;" onclick="wyloguj()">Wyloguj</button>
+      <div class="logout-btn" onclick="wyloguj()">
+        <span>Wyloguj sie</span>
+        <span style="font-size: 20px;">↩️</span>
       </div>
     </div>
 
+    <!-- GŁÓWNY OBSZAR TREŚCI -->
     <div class="content-area">
-      <!-- DASHBOARD -->
-      <div id="view-dashboard" style="display: flex; flex-direction: column; gap: 20px; height: 100%;">
-        <div class="welcome-card">
-          <div>
-            <h2 id="w-name" style="font-size: 22px;">Witaj!</h2>
-            <p id="w-date" style="font-size: 13px; color: var(--text-dim); margin-top: 4px;">Ładowanie daty...</p>
-          </div>
-          <button class="btn" onclick="pokazWidok('dzis')">Rozpocznij Dzisiejszy Kurs ➔</button>
-        </div>
 
-        <div class="calendar-container">
-          <div style="display: flex; justify-content: space-between; align-items: center;">
-            <h3 style="font-size: 16px; color: var(--orange-accent);">Twój Grafik Służb na Sierpień 2026</h3>
-            <span style="font-size: 11px; color: var(--text-dim);">🟡 Służba | 🟢 Wolne</span>
-          </div>
-          <div class="calendar-grid" id="cal-grid"></div>
+      <!-- WIDOK 1: STRONA GŁÓWNA (DOKŁADNIE ZE ZRZUTU EKRANU) -->
+      <div id="view-home" class="view-section active-view" style="justify-content: center;">
+        <div class="hero-welcome">Witaj,</div>
+        <div class="hero-name" id="display-driver-name">[nazwa_kierowcy]</div>
+        <div class="hero-sublabel">Dzisiaj jest:</div>
+        <div class="hero-datetime" id="display-datetime">[data i godzina]</div>
+      </div>
+
+      <!-- WIDOK 2: MIESIĘCZNY GRAFIK -->
+      <div id="view-grafik" class="view-section">
+        <div class="glass-card" style="height: 100%; display: flex; flex-direction: column;">
+          <h2 style="font-size: 24px; color: #fff; margin-bottom: 20px;">Twój Grafik Służb - Sierpień 2026</h2>
+          <div class="calendar-grid" id="cal-grid" style="flex: 1;"></div>
         </div>
       </div>
 
-      <!-- EKRAN JAZDY -->
-      <div id="view-drive" style="display: none; height: 100%; flex-direction: column; gap: 12px;">
-        <div class="welcome-card" style="padding: 15px;">
-          <div>
-            <span style="font-size: 11px; color: var(--text-dim);">AKTYWNA LINIA:</span>
-            <h3 id="d-line" style="color: var(--orange-accent); font-size: 18px;">Linia 161</h3>
+      <!-- WIDOK 3: DZISIEJSZY KURS -->
+      <div id="view-kurs" class="view-section">
+        <div class="glass-card" style="height: 100%; display: flex; flex-direction: column;">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+            <div>
+              <span style="color: var(--text-dim); font-size: 13px;">AKTYWNA LINIA</span>
+              <h2 style="font-size: 28px; color: #fff;">Linia 161 (Centrum ➔ Północ)</h2>
+            </div>
+            <div style="text-align: right;">
+              <span style="color: var(--text-dim); font-size: 13px;">NASTĘPNY ODJAZD</span>
+              <div style="font-size: 32px; font-weight: 800; color: #ff4d4d;" id="timer">02:30</div>
+            </div>
           </div>
-          <div style="text-align: right;">
-            <span style="font-size: 11px; color: var(--text-dim);">DO NASTĘPNEGO PRZYSTANKU:</span>
-            <h2 id="d-timer" style="color: var(--green-accent); font-family: monospace; font-size: 24px;">00:00</h2>
+
+          <div class="stops-scroll" id="stops-list">
+            <div class="stop-row active">
+              <span><strong>1. Dworzec Główny MPK</strong></span>
+              <span>14:00</span>
+            </div>
+            <div class="stop-row">
+              <span><strong>2. Plac Wolności</strong></span>
+              <span>14:06</span>
+            </div>
+            <div class="stop-row">
+              <span><strong>3. Ul. Reja</strong></span>
+              <span>14:12</span>
+            </div>
+            <div class="stop-row">
+              <span><strong>4. Osiedle Ogrody</strong></span>
+              <span>14:20</span>
+            </div>
           </div>
+
+          <button class="btn-action" onclick="alert('Zarejestrowano odjazd z przystanku!')">Potwierdź Odjazd z Przystanku</button>
         </div>
+      </div>
 
-        <div class="stops-scroll" id="d-stops"></div>
+      <!-- WIDOK 4: PROŚBY / ZMIANA KERSU -->
+      <div id="view-prosby" class="view-section">
+        <div class="glass-card" style="max-width: 600px;">
+          <h2 style="font-size: 24px; margin-bottom: 20px;">Zgłoszenie do Dyspozytora</h2>
+          <p style="color: var(--text-dim); margin-bottom: 20px;">Wyślij szybką prośbę o zmianę kursu, wolny dzień lub zamianę służby.</p>
+          
+          <div class="form-group">
+            <label style="color: #fff;">Typ Zgłoszenia</label>
+            <select class="input-pill" style="background: rgba(255,255,255,0.1); color: #fff;">
+              <option style="background: #111;">Prośba o zamianę służby</option>
+              <option style="background: #111;">Zgłoszenie awarii pojazdu</option>
+              <option style="background: #111;">Wniosek o urlop / wolne</option>
+            </select>
+          </div>
 
-        <div style="display: flex; gap: 10px;">
-          <button class="btn btn-secondary" style="flex: 1; font-size: 12px;" onclick="prosbaOZmiane()">⚠️ Prośba o Zmianę / Wolne</button>
-          <button class="btn btn-secondary" style="flex: 1; font-size: 12px;" onclick="dodatkowyKurs()">➕ Prośba o Dodatkowy Kurs</button>
-        </div>
-
-        <div style="display: flex; gap: 12px;">
-          <button id="btn-start" class="btn" style="flex: 1;" onclick="startJazda()">ZACZNIJ KURS</button>
-          <button id="btn-next" class="btn btn-secondary" style="flex: 1;" onclick="nastPrzystanek()" disabled>NASTĘPNY PRZYSTANEK ✓</button>
+          <button class="btn-action" style="width: 100%; margin-top: 15px;" onclick="alert('Zgłoszenie zostało wysłane do dyspozytora!')">Wyślij Zgłoszenie</button>
         </div>
       </div>
 
@@ -281,38 +442,31 @@
   </div>
 
   <script>
-    let uzytkownik = null;
-    let aktywneKonto = null;
-    let listaPrzystankow = [];
-    let indexPrzystanku = 0;
-    let timerInt = null;
-    let czasSek = 0;
+    let uzytkownik = "Jan Kowalski";
 
+    // Odświeżanie daty i godziny na Stronie Główniej
     setInterval(() => {
       const now = new Date();
-      document.getElementById('w-date').innerText = `Dzisiaj: ${now.toLocaleDateString()} | Godzina: ${now.toLocaleTimeString()}`;
+      const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+      const dateStr = now.toLocaleDateString('pl-PL', options);
+      const timeStr = now.toLocaleTimeString('pl-PL');
+      
+      const elem = document.getElementById('display-datetime');
+      if (elem) {
+        elem.innerText = `${dateStr}, ${timeStr}`;
+      }
     }, 1000);
 
-    function getDB() { return JSON.parse(localStorage.getItem('mpk_db_v2')) || { kierowcy: {}, linie: {}, grafiki: {}, zgloszenia: [] }; }
-    function saveDB(db) { localStorage.setItem('mpk_db_v2', JSON.stringify(db)); }
-
     function zaloguj() {
-      const login = document.getElementById('l-user').value.trim().toLowerCase();
-      if(!login) return alert('Wpisz login!');
-      
-      const db = getDB();
-      if (!db.kierowcy[login]) {
-        db.kierowcy[login] = { nazwa: login, login: login };
-        saveDB(db);
+      const loginInput = document.getElementById('l-user').value.trim();
+      if (loginInput !== "") {
+        uzytkownik = loginInput;
       }
-
-      uzytkownik = db.kierowcy[login];
-      aktywneKonto = login;
-
+      
+      document.getElementById('display-driver-name').innerText = uzytkownik;
       document.getElementById('login-screen').style.display = 'none';
       document.getElementById('main-layout').style.display = 'flex';
-      document.getElementById('w-name').innerText = `Witaj, ${uzytkownik.nazwa}!`;
-
+      
       generujKalendarz();
     }
 
@@ -321,121 +475,44 @@
       document.getElementById('login-screen').style.display = 'flex';
     }
 
-    function pokazWidok(v) {
-      document.getElementById('view-dashboard').style.display = v === 'dashboard' ? 'flex' : 'none';
-      document.getElementById('view-drive').style.display = v === 'dzis' ? 'flex' : 'none';
+    // Płynne przełączanie widoków
+    function pokazWidok(viewName) {
+      const sections = document.querySelectorAll('.view-section');
+      sections.forEach(sec => sec.classList.remove('active-view'));
 
-      document.getElementById('nav-dash').classList.toggle('active', v === 'dashboard');
-      document.getElementById('nav-drive').classList.toggle('active', v === 'dzis');
+      const navItems = document.querySelectorAll('.nav-item');
+      navItems.forEach(item => item.classList.remove('active'));
 
-      if (v === 'dzis') zaladujDzisiejszyKurs();
+      setTimeout(() => {
+        if (viewName === 'home') {
+          document.getElementById('view-home').classList.add('active-view');
+          document.getElementById('nav-home').classList.add('active');
+        } else if (viewName === 'grafik') {
+          document.getElementById('view-grafik').classList.add('active-view');
+          document.getElementById('nav-grafik').classList.add('active');
+        } else if (viewName === 'kurs') {
+          document.getElementById('view-kurs').classList.add('active-view');
+          document.getElementById('nav-kurs').classList.add('active');
+        } else if (viewName === 'prosby') {
+          document.getElementById('view-prosby').classList.add('active-view');
+          document.getElementById('nav-prosby').classList.add('active');
+        }
+      }, 50);
     }
 
     function generujKalendarz() {
-      const db = getDB();
-      const grafiki = (db.grafiki && db.grafiki[aktywneKonto]) ? db.grafiki[aktywneKonto] : {};
       const grid = document.getElementById('cal-grid');
+      if (!grid) return;
       grid.innerHTML = '';
-
       for (let i = 1; i <= 31; i++) {
-        const g = grafiki[i];
+        const isWork = i % 2 === 0;
         grid.innerHTML += `
-          <div class="day-box ${g ? 'work' : 'free'}">
+          <div class="day-box ${isWork ? 'work' : ''}">
             <strong>Dzień ${i}</strong>
-            <span style="font-size: 10px; font-weight: bold; margin-top: 4px;">${g ? 'Linia ' + g.linia : 'WOLNE'}</span>
-            <span style="font-size: 9px; color: var(--text-dim);">${g ? g.kolek + ' kółka' : 'Odpoczynek'}</span>
+            <span style="font-size: 11px; color: ${isWork ? '#ff6b6b' : '#6bcc6b'}">${isWork ? 'Linia 161' : 'WOLNE'}</span>
           </div>
         `;
       }
-    }
-
-    function zaladujDzisiejszyKurs() {
-      listaPrzystankow = [
-        { nazwa: "Zakładowa MPK", czas_sek: 0 },
-        { nazwa: "Plac Wolności", czas_sek: 120 },
-        { nazwa: "Reja", czas_sek: 90 },
-        { nazwa: "Brzechwy", czas_sek: 60 },
-        { nazwa: "Na bruku", czas_sek: 120 },
-        { nazwa: "Sukiennicza", czas_sek: 90 },
-        { nazwa: "Kamienna n/ż", czas_sek: 60 },
-        { nazwa: "Rondo Legionów Polskich", czas_sek: 50 }
-      ];
-      renderujPrzystanki();
-    }
-
-    function renderujPrzystanki() {
-      const container = document.getElementById('d-stops');
-      container.innerHTML = '';
-
-      listaPrzystankow.forEach((p, idx) => {
-        let cls = '';
-        if (idx < indexPrzystanku) cls = 'passed';
-        if (idx === indexPrzystanku) cls = 'active';
-
-        container.innerHTML += `
-          <div class="stop-row ${cls}">
-            <span><strong>${idx + 1}. ${p.nazwa}</strong></span>
-            <span style="font-size: 12px; color: var(--text-dim);">${p.czas_sek}s</span>
-          </div>
-        `;
-      });
-    }
-
-    function startJazda() {
-      document.getElementById('btn-start').disabled = true;
-      document.getElementById('btn-next').disabled = false;
-      indexPrzystanku = 0;
-      uruchomOdliczanie();
-    }
-
-    function uruchomOdliczanie() {
-      clearInterval(timerInt);
-      const nast = indexPrzystanku + 1;
-      czasSek = nast < listaPrzystankow.length ? listaPrzystankow[nast].czas_sek : 0;
-
-      odswiezZegar();
-      timerInt = setInterval(() => {
-        if (czasSek > 0) {
-          czasSek--;
-          odswiezZegar();
-        } else {
-          clearInterval(timerInt);
-        }
-      }, 1000);
-    }
-
-    function odswiezZegar() {
-      const m = Math.floor(czasSek / 60);
-      const s = czasSek % 60;
-      document.getElementById('d-timer').innerText = `${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
-    }
-
-    function nastPrzystanek() {
-      if (indexPrzystanku < listaPrzystankow.length - 1) {
-        indexPrzystanku++;
-        renderujPrzystanki();
-        uruchomOdliczanie();
-      } else {
-        clearInterval(timerInt);
-        alert('Koniec kursu na tej linii!');
-        document.getElementById('btn-next').disabled = true;
-        document.getElementById('btn-start').disabled = false;
-      }
-    }
-
-    function prosbaOZmiane() { wyslijZgloszenie("Prośba o Zmianę / Wolne"); }
-    function dodatkowyKurs() { wyslijZgloszenie("Prośba o Dodatkowy Kurs"); }
-
-    function wyslijZgloszenie(typ) {
-      const db = getDB();
-      if (!db.zgloszenia) db.zgloszenia = [];
-      db.zgloszenia.push({
-        kierowca: uzytkownik ? uzytkownik.nazwa : "Kierowca",
-        typ: typ,
-        czas: new Date().toLocaleTimeString()
-      });
-      saveDB(db);
-      alert(`Wysłano powiadomienie do dyspozytora: "${typ}"`);
     }
   </script>
 </body>
