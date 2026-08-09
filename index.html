@@ -3,6 +3,383 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <title>MPK Drobin - Aplikacja dla kierowcy</title>
+  <!-- Czcionka jak w Twoim projekcie -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet">
+  
+  <style>
+    :root {
+      --bg-dark: #0a0103;
+      --border: #2d0d13;
+      --accent-red: #61131b;
+      --accent-red-hover: #7d1923;
+      --text-white: #ffffff;
+      --text-dim: #a3888d;
+      --orange-accent: #ff8c00;
+      --green-accent: #2ea043;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; user-select: none; }
+    
+    html, body {
+      width: 100vw; height: 100dvh;
+      background-color: var(--bg-dark);
+      color: var(--text-white);
+      font-family: 'Plus Jakarta Sans', -apple-system, sans-serif;
+      overflow: hidden;
+    }
+
+    .app-viewport {
+      display: flex; width: 100vw; height: 100dvh;
+      padding-top: env(safe-area-inset-top, 0px);
+      padding-bottom: env(safe-area-inset-bottom, 0px);
+    }
+
+    /* EKRAN LOGOWANIA - 1:1 ZE SZKICEM */
+    #login-screen {
+      position: fixed; inset: 0;
+      background: radial-gradient(circle at 0% 0%, #000000 0%, #1e0307 35%, #42080f 70%, #180205 100%);
+      z-index: 2000;
+      display: flex; justify-content: flex-start; align-items: center;
+      padding-left: 80px;
+    }
+
+    @media (max-width: 600px) {
+      #login-screen { padding-left: 25px; padding-right: 25px; }
+    }
+
+    .login-container {
+      width: 100%; max-width: 320px;
+      text-align: left;
+    }
+
+    /* LOGO I NAGŁÓWEK 1:1 */
+    .brand-header { margin-bottom: 25px; }
+    
+    .brand-logo-img {
+      width: 230px;
+      height: auto;
+      display: block;
+      margin-bottom: 12px;
+      filter: drop-shadow(0 4px 10px rgba(0,0,0,0.5));
+    }
+
+    .brand-title { 
+      font-size: 18px; font-weight: 800; color: #ffffff; letter-spacing: -0.2px;
+    }
+
+    /* FORMULARZ LOGOWANIA 1:1 */
+    .form-group { margin-bottom: 16px; }
+    .form-group label { 
+      display: block; font-size: 15px; font-weight: 700; color: #ffffff; margin-bottom: 8px; 
+    }
+
+    .input-pill {
+      width: 100%; height: 46px; background: #ffffff; border: none; border-radius: 23px;
+      padding: 0 18px; font-size: 15px; font-weight: 600; color: #000; outline: none;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.3); transition: transform 0.2s;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+    }
+
+    select.input-pill {
+      appearance: none; -webkit-appearance: none;
+      background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23000000'%3e%3cpath d='M7 10l5 5 5-5z'/%3e%3c/svg%3e");
+      background-repeat: no-repeat; background-position: right 14px center; background-size: 22px;
+      cursor: pointer;
+    }
+
+    .btn-login {
+      width: 100%; height: 48px; background: #5c1218;
+      border: none; border-radius: 24px; color: #ffffff;
+      font-size: 15px; font-weight: 700; cursor: pointer; margin-top: 8px;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.4); transition: all 0.2s ease;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+    }
+    .btn-login:hover { background: #7a1820; }
+
+    /* LAYOUT APLIKACJI PO ZALOGOWANIU */
+    #main-layout { display: none; width: 100vw; height: 100dvh; background: #0b0204; }
+    .sidebar-menu { width: 260px; background: #120407; border-right: 1px solid var(--border); display: flex; flex-direction: column; justify-content: space-between; padding: 20px; }
+    .nav-item { padding: 14px 16px; border-radius: 12px; color: var(--text-dim); font-weight: 700; font-size: 14px; margin-bottom: 8px; cursor: pointer; transition: 0.2s; }
+    .nav-item.active { background: var(--orange-accent); color: #000; }
+    .content-area { flex: 1; display: flex; flex-direction: column; padding: 20px; overflow-y: auto; gap: 20px; }
+
+    .welcome-card { background: linear-gradient(135deg, #24080e, #120407); border: 1px solid var(--border); border-radius: 16px; padding: 20px; display: flex; justify-content: space-between; align-items: center; }
+    .calendar-container { background: #120407; border: 1px solid var(--border); border-radius: 16px; padding: 20px; flex: 1; }
+    .calendar-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 10px; margin-top: 15px; }
+    .day-box { background: #080203; border: 1px solid var(--border); border-radius: 10px; padding: 10px; min-height: 70px; display: flex; flex-direction: column; justify-content: space-between; font-size: 12px; }
+    .day-box.work { border-color: var(--orange-accent); background: #1a0f05; }
+    .day-box.free { border-color: var(--green-accent); background: #051409; }
+
+    .stops-scroll { flex: 1; background: #120407; border: 1px solid var(--border); border-radius: 12px; padding: 15px; overflow-y: auto; }
+    .stop-row { padding: 14px; background: #080203; border-radius: 10px; margin-bottom: 8px; border-left: 5px solid var(--border); display: flex; justify-content: space-between; }
+    .stop-row.active { border-left-color: var(--orange-accent); background: #1c1107; }
+    .stop-row.passed { border-left-color: var(--green-accent); opacity: 0.4; }
+
+    .btn { background: var(--orange-accent); color: #000; border: none; padding: 14px; font-weight: 800; border-radius: 12px; cursor: pointer; text-align: center; }
+    .btn:disabled { opacity: 0.3; cursor: not-allowed; }
+    .btn-secondary { background: var(--border); color: #fff; }
+    .btn-red { background: var(--accent-red); color: #fff; }
+  </style>
+</head>
+<body>
+
+  <!-- EKRAN LOGOWANIA -->
+  <div id="login-screen">
+    <div class="login-container">
+      <div class="brand-header">
+        <img src="Gemini_Generated_Image_tk6lp5tk6lp5tk6l(1).png" alt="MPK DROBIN" class="brand-logo-img">
+        <div class="brand-title">Aplikacja dla kierowcy</div>
+      </div>
+
+      <div class="form-group">
+        <label for="l-user">Login</label>
+        <input type="text" id="l-user" class="input-pill">
+      </div>
+
+      <div class="form-group">
+        <label for="l-system">Wybierz urządzenie</label>
+        <select id="l-system" class="input-pill">
+          <option value="android">📱 Android Phone / Tablet</option>
+          <option value="ios">🍎 Apple iPhone / iPad</option>
+          <option value="pc">💻 Komputer PC / Laptop</option>
+        </select>
+      </div>
+
+      <button class="btn-login" onclick="zaloguj()">Zaloguj do systemu</button>
+    </div>
+  </div>
+
+  <!-- APLIKACJA GŁÓWNA -->
+  <div id="main-layout" class="app-viewport">
+    <div class="sidebar-menu">
+      <div>
+        <h3 style="color: var(--orange-accent); font-size: 18px; margin-bottom: 25px;">MPK Mobile</h3>
+        <div id="nav-dash" class="nav-item active" onclick="pokazWidok('dashboard')">📅 Miesięczny Grafik</div>
+        <div id="nav-drive" class="nav-item" onclick="pokazWidok('dzis')">🚍 Dzisiejszy Kurs</div>
+      </div>
+
+      <div>
+        <button class="btn btn-secondary" style="width: 100%; margin-bottom: 10px; font-size: 12px;" onclick="prosbaOZmiane()">PROŚBA / ZMIANA</button>
+        <button class="btn btn-red" style="width: 100%; font-size: 12px;" onclick="wyloguj()">Wyloguj</button>
+      </div>
+    </div>
+
+    <div class="content-area">
+      <!-- DASHBOARD -->
+      <div id="view-dashboard" style="display: flex; flex-direction: column; gap: 20px; height: 100%;">
+        <div class="welcome-card">
+          <div>
+            <h2 id="w-name" style="font-size: 22px;">Witaj!</h2>
+            <p id="w-date" style="font-size: 13px; color: var(--text-dim); margin-top: 4px;">Ładowanie daty...</p>
+          </div>
+          <button class="btn" onclick="pokazWidok('dzis')">Rozpocznij Dzisiejszy Kurs ➔</button>
+        </div>
+
+        <div class="calendar-container">
+          <div style="display: flex; justify-content: space-between; align-items: center;">
+            <h3 style="font-size: 16px; color: var(--orange-accent);">Twój Grafik Służb na Sierpień 2026</h3>
+            <span style="font-size: 11px; color: var(--text-dim);">🟡 Służba | 🟢 Wolne</span>
+          </div>
+          <div class="calendar-grid" id="cal-grid"></div>
+        </div>
+      </div>
+
+      <!-- EKRAN JAZDY -->
+      <div id="view-drive" style="display: none; height: 100%; flex-direction: column; gap: 12px;">
+        <div class="welcome-card" style="padding: 15px;">
+          <div>
+            <span style="font-size: 11px; color: var(--text-dim);">AKTYWNA LINIA:</span>
+            <h3 id="d-line" style="color: var(--orange-accent); font-size: 18px;">Linia 161</h3>
+          </div>
+          <div style="text-align: right;">
+            <span style="font-size: 11px; color: var(--text-dim);">DO NASTĘPNEGO PRZYSTANKU:</span>
+            <h2 id="d-timer" style="color: var(--green-accent); font-family: monospace; font-size: 24px;">00:00</h2>
+          </div>
+        </div>
+
+        <div class="stops-scroll" id="d-stops"></div>
+
+        <div style="display: flex; gap: 10px;">
+          <button class="btn btn-secondary" style="flex: 1; font-size: 12px;" onclick="prosbaOZmiane()">⚠️ Prośba o Zmianę / Wolne</button>
+          <button class="btn btn-secondary" style="flex: 1; font-size: 12px;" onclick="dodatkowyKurs()">➕ Prośba o Dodatkowy Kurs</button>
+        </div>
+
+        <div style="display: flex; gap: 12px;">
+          <button id="btn-start" class="btn" style="flex: 1;" onclick="startJazda()">ZACZNIJ KURS</button>
+          <button id="btn-next" class="btn btn-secondary" style="flex: 1;" onclick="nastPrzystanek()" disabled>NASTĘPNY PRZYSTANEK ✓</button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <script>
+    let uzytkownik = null;
+    let aktywneKonto = null;
+    let listaPrzystankow = [];
+    let indexPrzystanku = 0;
+    let timerInt = null;
+    let czasSek = 0;
+
+    setInterval(() => {
+      const now = new Date();
+      document.getElementById('w-date').innerText = `Dzisiaj: ${now.toLocaleDateString()} | Godzina: ${now.toLocaleTimeString()}`;
+    }, 1000);
+
+    function getDB() { return JSON.parse(localStorage.getItem('mpk_db_v2')) || { kierowcy: {}, linie: {}, grafiki: {}, zgloszenia: [] }; }
+    function saveDB(db) { localStorage.setItem('mpk_db_v2', JSON.stringify(db)); }
+
+    function zaloguj() {
+      const login = document.getElementById('l-user').value.trim().toLowerCase();
+      if(!login) return alert('Wpisz login!');
+      
+      const db = getDB();
+      if (!db.kierowcy[login]) {
+        db.kierowcy[login] = { nazwa: login, login: login };
+        saveDB(db);
+      }
+
+      uzytkownik = db.kierowcy[login];
+      aktywneKonto = login;
+
+      document.getElementById('login-screen').style.display = 'none';
+      document.getElementById('main-layout').style.display = 'flex';
+      document.getElementById('w-name').innerText = `Witaj, ${uzytkownik.nazwa}!`;
+
+      generujKalendarz();
+    }
+
+    function wyloguj() {
+      document.getElementById('main-layout').style.display = 'none';
+      document.getElementById('login-screen').style.display = 'flex';
+    }
+
+    function pokazWidok(v) {
+      document.getElementById('view-dashboard').style.display = v === 'dashboard' ? 'flex' : 'none';
+      document.getElementById('view-drive').style.display = v === 'dzis' ? 'flex' : 'none';
+
+      document.getElementById('nav-dash').classList.toggle('active', v === 'dashboard');
+      document.getElementById('nav-drive').classList.toggle('active', v === 'dzis');
+
+      if (v === 'dzis') zaladujDzisiejszyKurs();
+    }
+
+    function generujKalendarz() {
+      const db = getDB();
+      const grafiki = (db.grafiki && db.grafiki[aktywneKonto]) ? db.grafiki[aktywneKonto] : {};
+      const grid = document.getElementById('cal-grid');
+      grid.innerHTML = '';
+
+      for (let i = 1; i <= 31; i++) {
+        const g = grafiki[i];
+        grid.innerHTML += `
+          <div class="day-box ${g ? 'work' : 'free'}">
+            <strong>Dzień ${i}</strong>
+            <span style="font-size: 10px; font-weight: bold; margin-top: 4px;">${g ? 'Linia ' + g.linia : 'WOLNE'}</span>
+            <span style="font-size: 9px; color: var(--text-dim);">${g ? g.kolek + ' kółka' : 'Odpoczynek'}</span>
+          </div>
+        `;
+      }
+    }
+
+    function zaladujDzisiejszyKurs() {
+      listaPrzystankow = [
+        { nazwa: "Zakładowa MPK", czas_sek: 0 },
+        { nazwa: "Plac Wolności", czas_sek: 120 },
+        { nazwa: "Reja", czas_sek: 90 },
+        { nazwa: "Brzechwy", czas_sek: 60 },
+        { nazwa: "Na bruku", czas_sek: 120 },
+        { nazwa: "Sukiennicza", czas_sek: 90 },
+        { nazwa: "Kamienna n/ż", czas_sek: 60 },
+        { nazwa: "Rondo Legionów Polskich", czas_sek: 50 }
+      ];
+      renderujPrzystanki();
+    }
+
+    function renderujPrzystanki() {
+      const container = document.getElementById('d-stops');
+      container.innerHTML = '';
+
+      listaPrzystankow.forEach((p, idx) => {
+        let cls = '';
+        if (idx < indexPrzystanku) cls = 'passed';
+        if (idx === indexPrzystanku) cls = 'active';
+
+        container.innerHTML += `
+          <div class="stop-row ${cls}">
+            <span><strong>${idx + 1}. ${p.nazwa}</strong></span>
+            <span style="font-size: 12px; color: var(--text-dim);">${p.czas_sek}s</span>
+          </div>
+        `;
+      });
+    }
+
+    function startJazda() {
+      document.getElementById('btn-start').disabled = true;
+      document.getElementById('btn-next').disabled = false;
+      indexPrzystanku = 0;
+      uruchomOdliczanie();
+    }
+
+    function uruchomOdliczanie() {
+      clearInterval(timerInt);
+      const nast = indexPrzystanku + 1;
+      czasSek = nast < listaPrzystankow.length ? listaPrzystankow[nast].czas_sek : 0;
+
+      odswiezZegar();
+      timerInt = setInterval(() => {
+        if (czasSek > 0) {
+          czasSek--;
+          odswiezZegar();
+        } else {
+          clearInterval(timerInt);
+        }
+      }, 1000);
+    }
+
+    function odswiezZegar() {
+      const m = Math.floor(czasSek / 60);
+      const s = czasSek % 60;
+      document.getElementById('d-timer').innerText = `${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
+    }
+
+    function nastPrzystanek() {
+      if (indexPrzystanku < listaPrzystankow.length - 1) {
+        indexPrzystanku++;
+        renderujPrzystanki();
+        uruchomOdliczanie();
+      } else {
+        clearInterval(timerInt);
+        alert('Koniec kursu na tej linii!');
+        document.getElementById('btn-next').disabled = true;
+        document.getElementById('btn-start').disabled = false;
+      }
+    }
+
+    function prosbaOZmiane() { wyslijZgloszenie("Prośba o Zmianę / Wolne"); }
+    function dodatkowyKurs() { wyslijZgloszenie("Prośba o Dodatkowy Kurs"); }
+
+    function wyslijZgloszenie(typ) {
+      const db = getDB();
+      if (!db.zgloszenia) db.zgloszenia = [];
+      db.zgloszenia.push({
+        kierowca: uzytkownik ? uzytkownik.nazwa : "Kierowca",
+        typ: typ,
+        czas: new Date().toLocaleTimeString()
+      });
+      saveDB(db);
+      alert(`Wysłano powiadomienie do dyspozytora: "${typ}"`);
+    }
+  </script>
+</body>
+</html><!DOCTYPE html>
+<html lang="pl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
   <title>Drobin Urbanow MPK - Mobile</title>
   <style>
     :root {
